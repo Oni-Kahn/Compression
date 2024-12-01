@@ -161,63 +161,60 @@ int main()
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image
   
-    //step 2: load the image data
-    int width, height, channels;
-    unsigned char* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
-    if (imageData == nullptr) 
+  //step 2: load the image data
+  int width, height, channels;
+  unsigned char* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
+  if (imageData == nullptr) 
+  {
+    cerr << "Error loading image: " << stbi_failure_reason() << endl;
+    return 1;
+  }
+  
+  //step 3: convert the image data to a 2D vector of doubles (grayscale)
+  vector<vector<double>> imageMatrix(height, vector<double>(width));
+  for (int i = 0; i < height; ++i) 
+  {
+    for (int j = 0; j < width; ++j) 
     {
-      cerr << "Error loading image: " << stbi_failure_reason() << endl;
-      return 1;
+      // Assuming grayscale, take the average of R, G, B values if the image is not grayscale
+      imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
     }
+  }
+  stbi_image_free(imageData); //free the original image data
   
-    //step 3: convert the image data to a 2D vector of doubles (grayscale)
-    vector<vector<double>> imageMatrix(height, vector<double>(width));
-    for (int i = 0; i < height; ++i) 
+  //step 4: perform DCT
+  vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
+  
+  //step 5: quantize DCT coefficients and adjust quality as needed
+  int quality = 50; // You can get this from the user or another source
+  cout << "Enter desired quality (0-100): ";
+  cin >> quality;
+  vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
+  
+  //step 6: quantize DCT coefficients
+  vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
+  
+  //step 7: perform inverse DCT
+  vector<vector<double>> reconstructedImage = idctTransform(dequantizedDCT);
+  
+  //step 8: convert back to an unsigned char format for saving
+  vector<unsigned char> outputData(height * width);
+  for (int i = 0; i < height; ++i) 
+  {
+    for (int j = 0; j < width; ++j) 
     {
-      for (int j = 0; j < width; ++j) 
-      {
-        // Assuming grayscale, take the average of R, G, B values if the image is not grayscale
-        imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
-      }
+      outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
     }
-    stbi_image_free(imageData); //free the original image data
+  }
   
-    //step 4: perform DCT
-    vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
-  
-    //step 5: quantize DCT coefficients and adjust quality as needed
-    int quality = 50; // You can get this from the user or another source
-    cout << "Enter desired quality (0-100): ";
-    cin >> quality;
-    vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  
-    //step 6: quantize DCT coefficients
-    vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  
-    //step 7: perform inverse DCT
-    vector<vector<double>> reconstructedImage = idctTransform(dequantizedDCT);
-  
-    //step 8: convert back to an unsigned char format for saving
-    vector<unsigned char> outputData(height * width);
-    for (int i = 0; i < height; ++i) 
-    {
-      for (int j = 0; j < width; ++j) 
-      {
-        outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
-      }
-    }
-  
-    //step 9: save the reconstructed image
-    string outputFilename = "reconstructed_" + filename;
-    if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
-    {
-      cerr << "Error saving image." << endl;
-      return 1;
-    }
+  //step 9: save the reconstructed image
+  string outputFilename = "reconstructed_" + filename;
+  if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
+  {
+    cerr << "Error saving image." << endl;
+    return 1;
+  }
 
-    cout << "Reconstructed image saved as " << outputFilename << endl;
-    return crow::response("Image processed successfully!";
-  });
-  app.port(18080).multithreaded().run();
+  cout << "Reconstructed image saved as " << outputFilename << endl;
   return 0;
 }
