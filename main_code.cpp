@@ -159,7 +159,7 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
 int main() 
 {
   //step 1: call in image that the user uploaded
-  string filename = "cat_test_256x256.jpg"; //test image
+  string filename = "cat_test_256x256.jpg"; //test image 
   
   //step 2: load the image data
   int width, height, channels;
