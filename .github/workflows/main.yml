@@ -30,4 +30,4 @@ jobs:
 
     - name: Run
       working-directory: ./build
-      run: ./main_code # Replace with your executable name
+      run: ./main_code.cpp # Replace with your executable name
