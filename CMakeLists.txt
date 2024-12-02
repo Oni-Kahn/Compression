@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)  # Specify the minimum CMake version
 project(Compression)  # Set the project name
 
 # Find ASIO lib
-ind_path(asio_INCLUDE_DIR asio.hpp
+find_path(asio_INCLUDE_DIR asio.hpp
   PATHS /usr/include
         /usr/local/include
 )
