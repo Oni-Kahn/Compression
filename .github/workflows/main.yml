@@ -32,6 +32,7 @@ jobs:
       run: |
         git clone https://github.com/CrowCpp/Crow.git
         cd Crow
+        echo "Crow include path: $Crow_DIR"
 
     - name: Create build directory
       run: mkdir build
