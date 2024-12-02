@@ -30,6 +30,9 @@ jobs:
     - name: Check pip version
       run: pip --version
 
+    - name: Check matplotlib
+      run: ls /usr/local/include/matplotlibcpp.h
+
     - name: Clean build dir
       run: |
         rm -rf build
