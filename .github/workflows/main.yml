@@ -30,16 +30,6 @@ jobs:
     - name: Check pip version
       run: pip --version
 
-    - name: Install Crow
-      run: |
-        git clone https://github.com/CrowCpp/Crow.git
-        cd Crow
-        mkdir build
-        cd build
-        cmake ..
-        sudo make install
-        cd ../../
-
     - name: Clean build dir
       run: |
         rm -rf build
