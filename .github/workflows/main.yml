@@ -19,8 +19,10 @@ jobs:
         git clone https://github.com/chriskohlhoff/asio.git
         cd asio
         mkdir build
-        sudo cp -r *.hpp /usr/local/include
-        cd ..
+        cd build
+        cmake ..
+        sudo make install
+        cd ../..
         
         git clone https://github.com/lava/matplotlib-cpp.git
         cd matplotlib-cpp
@@ -28,7 +30,7 @@ jobs:
         cd build
         cmake ..
         sudo make install
-        cd ../../
+        cd ../..
 
     - name: Check Python version
       run: python --version
@@ -44,7 +46,7 @@ jobs:
         cd build
         cmake ..
         sudo make install
-        cd ../../
+        cd ../..
 
     - name: Create build directory
       run: mkdir build
