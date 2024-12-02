@@ -42,16 +42,6 @@ jobs:
     - name: Create build directory
       run: mkdir build
 
-    - name: Print paths
-      working-directory: ./build
-      run: |
-        ASIO_INCLUDE_PATH=$(cmake -E env ASIO_INCLUDE_DIR)
-        echo "ASIO include path: $ASIO_INCLUDE_PATH"
-        MATPLOTLIB_CPP_INCLUDE_PATH=$(cmake -E enve matplotlib-cpp_INCLUDE_DIRS)
-        echo "Matplot include path: $MATPLOTLIB-CPP_INCLUDE_PATH"
-        CROW_INCLUDE_PATH=$(cmake -E env Crow_INCLUDE_DIRS)
-        echo "Crow include path: $CROW_INCLUDE_PATH"
-
     - name: Configure CMake
       working-directory: ./build
       run: cmake ..
