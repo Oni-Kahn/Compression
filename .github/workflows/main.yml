@@ -31,7 +31,7 @@ jobs:
       run: pip --version
 
     - name: Check matplotlib
-      run: ls -lR matplotlib-cpp/build | grep "matplotlib-cppConfig.cmake"
+      run: ls -lR matplotlib-cpp/build
 
     - name: Clean build dir
       run: |
