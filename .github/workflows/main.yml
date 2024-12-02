@@ -40,7 +40,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ./build
-      run: cmake .. --trace
+      run: cmake .. 
 
     - name: Build
       working-directory: ./build
