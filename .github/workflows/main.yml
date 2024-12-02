@@ -32,6 +32,11 @@ jobs:
       run: |
         git clone https://github.com/CrowCpp/Crow.git
         cd Crow
+        mkdir build
+        cd build
+        cmake ..
+        sudo make install
+        cd ../../
         echo "Crow include path: $Crow_DIR"
 
     - name: Create build directory
