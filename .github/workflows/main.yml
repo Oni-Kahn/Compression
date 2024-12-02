@@ -45,12 +45,14 @@ jobs:
         sudo make install
         cd ../../
 
-    - name: Create build directory
-      run: mkdir build
+    - name: Clean build dir
+      run: |
+        rm -rf build
+        mkdir build
 
     - name: Configure CMake
       working-directory: ./build
-      run: cmake ..
+      run: cmake .. --trace
 
     - name: Build
       working-directory: ./build
