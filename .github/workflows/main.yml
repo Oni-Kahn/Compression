@@ -8,14 +8,21 @@ jobs:
   build:
     runs-on: ubuntu-latest 
 
-    steps:
+    steps: 
     - uses: actions/checkout@v3 # Checks out your code
 
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ cmake libstb-dev python3 python3-pip
-        pip3 install matplotlib-cpp 
+        /usr/bin/python3 -m ensurepip 
+        /usr/bin/pip3 install matplotlib-cpp 
+
+    - name: Check Python version
+      run: python --version
+
+    - name: Check pip version
+      run: pip --version
 
     - name: Create build directory
       run: mkdir build
