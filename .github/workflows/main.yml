@@ -29,7 +29,9 @@ jobs:
         cd matplotlib-cpp
 
     - name: Install Crow
-      run: sudo apt-get install -y libcrow-dev
+      run: |
+        git clone https://github.com/CrowCpp/Crow.git
+        cd Crow
 
     - name: Create build directory
       run: mkdir build
