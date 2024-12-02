@@ -28,6 +28,9 @@ jobs:
         git clone https://github.com/lava/matplotlib-cpp.git
         cd matplotlib-cpp
 
+    - name: Install Crow
+      run: sudo apt-get install -y libcrow-dev
+
     - name: Create build directory
       run: mkdir build
 
