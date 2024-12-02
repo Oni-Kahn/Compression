@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)  # Specify the minimum CMake version
 project(Compression)  # Set the project name
 
 # Find the Crow library
+set(Crow_DIR /home/runner/work/Compression/Compression/Crow/build)
 find_package(Crow REQUIRED)
 
 # Find the matplotlib-cpp library
