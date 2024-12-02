@@ -12,7 +12,7 @@ find_package(Crow REQUIRED)
 find_package(matplotlib-cpp REQUIRED)
 
 # Add your executable
-add_executable(compression main_code.cpp)  # Replace 'compression' with your desired executable name
+add_executable(Compression main_code.cpp)  # Replace 'compression' with your desired executable name
 
 # Link libraries
-target_link_libraries(compression Crow::Crow matplotlib-cpp::matplotlib-cpp)
+target_link_libraries(Compression Crow::Crow matplotlib-cpp::matplotlib-cpp asio::asio)
