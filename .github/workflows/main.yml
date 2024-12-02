@@ -32,6 +32,9 @@ jobs:
     - name: Check pip version
       run: pip --version
 
+    - name: Check ASIO install
+      run: dpkg -L libasio-dev
+
     - name: Install Crow
       run: |
         git clone https://github.com/CrowCpp/Crow.git
