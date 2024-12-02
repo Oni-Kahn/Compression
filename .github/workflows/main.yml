@@ -14,6 +14,9 @@ jobs:
     - name: Install Python and pip
       run: |
         sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository ppa:kitware/cmake -y
+        sudo apt-get update
         sudo apt-get install -y g++ cmake libstb-dev python3 python3-pip 
         sudo apt-get install -y libasio-dev
 
@@ -28,6 +31,11 @@ jobs:
         sudo apt-get install -y python3-matplotlib
         git clone https://github.com/lava/matplotlib-cpp.git
         cd matplotlib-cpp
+        mkdir build
+        cd build
+        cmake ..
+        sudo make install
+        cd ../../
 
     - name: Install Crow
       run: |
@@ -38,7 +46,6 @@ jobs:
         cmake ..
         sudo make install
         cd ../../
-        echo "Crow include path: $Crow_DIR"
 
     - name: Create build directory
       run: mkdir build
