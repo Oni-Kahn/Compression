@@ -187,8 +187,8 @@ int main()
   
   //step 5: quantize DCT coefficients and adjust quality as needed
   int quality = 50; // You can get this from the user or another source
-  cout << "Enter desired quality (0-100): ";
-  cin >> quality;
+  //cout << "Enter desired quality (0-100): ";
+  //cin >> quality;
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
   
   //step 6: quantize DCT coefficients
