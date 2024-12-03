@@ -71,6 +71,17 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
         }
       }
       matrix[i][j] = (2.0 / sqrt(height * width)) * sum; // Store the calculated pixel value
+
+      cout << "IDCT output (before clamping) in processBlock:" << endl; // Add this line
+      for (int i = 0; i < 8; ++i) 
+      {                                          // Add this loop
+        for (int j = 0; j < 8; ++j) 
+        {                                        // Add this loop
+          cout << reconstructedBlock[i][j] << " ";                          // Add this line
+        }
+        cout << endl;
+      }
+      
       matrix[i][j] = std::max(0.0, std::min(1.0, matrix[i][j]));
 
       cout << "IDCT output (after clamping) in idctTransform:" << endl; // Add this line
@@ -195,15 +206,6 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
 
   // 4. Inverse DCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
-  cout << "IDCT output (before clamping) in processBlock:" << endl; // Add this line
-  for (int i = 0; i < 8; ++i) 
-  {                                          // Add this loop
-    for (int j = 0; j < 8; ++j) 
-    {                                        // Add this loop
-      cout << reconstructedBlock[i][j] << " ";                          // Add this line
-    }
-    cout << endl;
-  }
 
   return reconstructedBlock;
 }
