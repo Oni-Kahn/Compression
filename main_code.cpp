@@ -158,13 +158,31 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
   return dct; // Return the 2D vector of dequantized DCT coefficients
 }
 
+// Function to process an 8x8 block of the image
+vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality) 
+{
+  // 1. DCT Transform
+  vector<vector<double>> dctCoefficients = dctTransform(block);
+
+  // 2. Quantization
+  vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
+
+  // 3. Dequantization
+  vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
+
+  // 4. Inverse DCT Transform
+  vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
+
+  return reconstructedBlock;
+}
+
 int main() 
 {
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image 
   std::cout << "You have reached checkpoint 1" << std::endl;
   //step 2: load the image data
-  int width, height, channels;
+  /*int width, height, channels;
   unsigned char* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
   if (imageData == nullptr) 
   {
@@ -208,19 +226,60 @@ int main()
   std::cout << "You have reached checkpoint 4" << std::endl;
   //step 4: perform DCT
   vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
-  std::cout << "You have reached checkpoint 11" << std::endl;
+  std::cout << "You have reached checkpoint 5" << std::endl;
   //step 5: quantize DCT coefficients and adjust quality as needed
   int quality = 50; // You can get this from the user or another source
   //cout << "Enter desired quality (0-100): ";
   //cin >> quality;
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  std::cout << "You have reached checkpoint 5" << std::endl;
+  std::cout << "You have reached checkpoint 6" << std::endl;
   //step 6: quantize DCT coefficients
   vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  std::cout << "You have reached checkpoint 6" << std::endl;
+  std::cout << "You have reached checkpoint 7" << std::endl;
   //step 7: perform inverse DCT
   vector<vector<double>> reconstructedImage = idctTransform(dequantizedDCT);
-  std::cout << "You have reached checkpoint 7" << std::endl;
+  std::cout << "You have reached checkpoint 8" << std::endl;*/
+
+
+  // Process the image in 8x8 blocks
+  for (int i = 0; i < height; i += 8) 
+  {
+    for (int j = 0; j < width; j += 8) 
+    {
+      // Extract an 8x8 block from the image
+      vector<vector<double>> block(8, vector<double>(8));
+      std::cout << "You have reached checkpoint 2"
+      for (int u = 0; u < 8; ++u) 
+      {
+        for (int v = 0; v < 8; ++v) 
+        {
+          // Handle boundary conditions: If the block goes outside the image,
+          // use the edge pixel value.
+          int imgU = std::min(i + u, height - 1);
+          int imgV = std::min(j + v, width - 1);
+          block[u][v] = imageMatrix[imgU][imgV]; 
+          std::cout << "You have reached checkpoint 3"
+        }
+      }
+
+      // Process the block
+      vector<vector<double>> processedBlock = processBlock(block, quality);
+      std::cout << "You have reached checkpoint 4"
+      // Copy the processed block back into the image
+      for (int u = 0; u < 8; ++u) 
+      {
+        for (int v = 0; v < 8; ++v) 
+        {
+          int imgU = std::min(i + u, height - 1);
+          int imgV = std::min(j + v, width - 1);
+          reconstructedImage[imgU][imgV] = processedBlock[u][v];
+          std::cout << "You have reached checkpoint 5"
+        }
+      }
+    }
+  }
+
+  
   //step 8: convert back to an unsigned char format for saving
   vector<unsigned char> outputData(height * width);
   for (int i = 0; i < height; ++i) 
@@ -230,7 +289,7 @@ int main()
       outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
     }
   }
-  std::cout << "You have reached checkpoint 8" << std::endl;
+  std::cout << "You have reached checkpoint 6" << std::endl;
   //step 9: save the reconstructed image
   string outputFilename = "reconstructed_" + filename;
   if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
