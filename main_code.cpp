@@ -180,7 +180,7 @@ int main()
 {
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image 
-  std::cout << "You have reached checkpoint 1" << std::endl;
+  
   //step 2: load the image data
   int width, height, channels;
   unsigned char* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
@@ -189,7 +189,10 @@ int main()
     cerr << "Error loading image: " << stbi_failure_reason() << endl;
     return 1;
   }
-  std::cout << "You have reached checkpoint 2" << std::endl;
+  // Print image dimensions and channel count
+  cout << "Image dimensions: " << width << " x " << height << endl;
+  cout << "Number of channels: " << channels << endl;
+  
   //checks for image dimensions and data size
   size_t imageDataSize = width * height * channels * sizeof(unsigned char);
   if (width <= 0 || height <= 0 || channels <= 0 || (width * height * channels) > imageDataSize) 
@@ -197,7 +200,7 @@ int main()
     cerr << "Error: Invalid image data." << endl;
     return 1;
   }
-  std::cout << "You have reached checkpoint 3" << std::endl;
+  
   //step 3: convert the image data to a 2D vector of doubles (grayscale)
   vector<vector<double>> imageMatrix(height, vector<double>(width));
   for (int i = 0; i < height; ++i) 
@@ -223,23 +226,11 @@ int main()
     }
   }
   stbi_image_free(imageData); //free the original image data
-  std::cout << "You have reached checkpoint 4" << std::endl;
-  //step 4: perform DCT
-  //vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
-  //std::cout << "You have reached checkpoint 5" << std::endl;
+  
   //step 5: quantize DCT coefficients and adjust quality as needed
   int quality = 50; // You can get this from the user or another source
   //cout << "Enter desired quality (0-100): ";
   //cin >> quality;
-  /*vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  std::cout << "You have reached checkpoint 6" << std::endl;
-  //step 6: quantize DCT coefficients
-  vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  std::cout << "You have reached checkpoint 7" << std::endl;
-  //step 7: perform inverse DCT
-  vector<vector<double>> reconstructedImage = idctTransform(dequantizedDCT);
-  std::cout << "You have reached checkpoint 8" << std::endl;*/
-
 
   //initialize reconstructedImage 
   vector<vector<double>> reconstructedImage(height, vector<double>(width, 0.0));
@@ -250,7 +241,6 @@ int main()
     {
       // Extract an 8x8 block from the image
       vector<vector<double>> block(8, vector<double>(8));
-      std::cout << "You have reached checkpoint 5" << std::endl;
       for (int u = 0; u < 8; ++u) 
       {
         for (int v = 0; v < 8; ++v) 
@@ -260,13 +250,11 @@ int main()
           int imgU = std::min(i + u, height - 1);
           int imgV = std::min(j + v, width - 1);
           block[u][v] = imageMatrix[imgU][imgV]; 
-          std::cout << "You have reached checkpoint 6" << std::endl;
         }
       }
 
       // Process the block
       vector<vector<double>> processedBlock = processBlock(block, quality);
-      std::cout << "You have reached checkpoint 7" << std::endl;
       // Copy the processed block back into the image
       for (int u = 0; u < 8; ++u) 
       {
@@ -275,7 +263,6 @@ int main()
           int imgU = std::min(i + u, height - 1);
           int imgV = std::min(j + v, width - 1);
           reconstructedImage[imgU][imgV] = processedBlock[u][v];
-          std::cout << "You have reached checkpoint 8" << std::endl;
         }
       }
     }
@@ -291,7 +278,7 @@ int main()
       outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
     }
   }
-  std::cout << "You have reached checkpoint 9" << std::endl;
+  
   //step 9: save the reconstructed image
   string outputFilename = "reconstructed_" + filename;
   if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
