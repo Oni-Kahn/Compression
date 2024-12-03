@@ -188,10 +188,10 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
   }
 
   // 2. Quantization
-  vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
+  //vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
 
   // 3. Dequantization
-  vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
+  //vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
 
   // 4. Inverse DCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
