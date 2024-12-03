@@ -33,6 +33,14 @@ jobs:
     - name: Check matplotlib
       run: ls -lR matplotlib-cpp/build
 
+    - name: Configure CMake (matplotlib-cpp)
+      working-directory: ./matplotlib-cpp/build
+      run: cmake .. 
+
+    - name: Build (matplotlib-cpp)
+      working-directory: ./matplotlib-cpp/build
+      run: cmake --build .
+
     - name: Clean build dir
       run: |
         rm -rf build
