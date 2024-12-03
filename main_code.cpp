@@ -299,7 +299,18 @@ int main()
     cerr << "Error saving image." << endl;
     return 1;
   }
-
   cout << "Reconstructed image saved as " << outputFilename << endl;
+  // 1. Add the image to the repository
+  string gitAddCommand = "git add " + outputFilename;
+  system(gitAddCommand.c_str());
+
+  // 2. Commit the changes
+  string gitCommitCommand = "git commit -m \"Add reconstructed image\"";
+  system(gitCommitCommand.c_str());
+
+  // 3. Push to GitHub
+  string gitPushCommand = "git push origin main"; // Replace 'main' with your branch name if needed
+  system(gitPushCommand.c_str());
+  
   return 0;
 }
