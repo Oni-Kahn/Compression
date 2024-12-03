@@ -241,6 +241,8 @@ int main()
   std::cout << "You have reached checkpoint 8" << std::endl;*/
 
 
+  //initialize reconstructedImage 
+  vector<vector<double>> reconstructedImage(height, vector<double>(width, 0.0));
   // Process the image in 8x8 blocks
   for (int i = 0; i < height; i += 8) 
   {
@@ -248,7 +250,7 @@ int main()
     {
       // Extract an 8x8 block from the image
       vector<vector<double>> block(8, vector<double>(8));
-      std::cout << "You have reached checkpoint 2"
+      std::cout << "You have reached checkpoint 2";
       for (int u = 0; u < 8; ++u) 
       {
         for (int v = 0; v < 8; ++v) 
@@ -258,13 +260,13 @@ int main()
           int imgU = std::min(i + u, height - 1);
           int imgV = std::min(j + v, width - 1);
           block[u][v] = imageMatrix[imgU][imgV]; 
-          std::cout << "You have reached checkpoint 3"
+          std::cout << "You have reached checkpoint 3";
         }
       }
 
       // Process the block
       vector<vector<double>> processedBlock = processBlock(block, quality);
-      std::cout << "You have reached checkpoint 4"
+      std::cout << "You have reached checkpoint 4";
       // Copy the processed block back into the image
       for (int u = 0; u < 8; ++u) 
       {
@@ -273,7 +275,7 @@ int main()
           int imgU = std::min(i + u, height - 1);
           int imgV = std::min(j + v, width - 1);
           reconstructedImage[imgU][imgV] = processedBlock[u][v];
-          std::cout << "You have reached checkpoint 5"
+          std::cout << "You have reached checkpoint 5";
         }
       }
     }
