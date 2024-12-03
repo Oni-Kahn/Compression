@@ -169,6 +169,13 @@ int main()
     cerr << "Error loading image: " << stbi_failure_reason() << endl;
     return 1;
   }
+
+  //checks for image dimensions and data size
+  if (width <= 0 || height <= 0 || channels <= 0 || (width * height * channels) > imageDataSize) 
+  {
+    cerr << "Error: Invalid image data." << endl;
+    return 1;
+  }
   
   //step 3: convert the image data to a 2D vector of doubles (grayscale)
   vector<vector<double>> imageMatrix(height, vector<double>(width));
