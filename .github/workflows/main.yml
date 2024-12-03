@@ -42,7 +42,7 @@ jobs:
       run: cmake --build .
 
     - name: Check for matplotlib-cppConfig.cmake
-      run: ls -l /home/runner/work/Compression/Compression/matplotlib-cpp/build/matplotlib-cppConfig.cmake
+      run: ls -l /home/runner/work/Compression/Compression/matplotlib-cpp/build
 
     - name: Clean build dir
       run: |
