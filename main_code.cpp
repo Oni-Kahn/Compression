@@ -171,7 +171,8 @@ int main()
   }
 
   //checks for image dimensions and data size
-  if (width <= 0 || height <= 0 || channels <= 0 || (width * height * channels) > imageData) 
+  size_t imageDataSize = width * height * channels * sizeof(unsigned char);
+  if (width <= 0 || height <= 0 || channels <= 0 || (width * height * channels) > imageDataSize) 
   {
     cerr << "Error: Invalid image data." << endl;
     return 1;
