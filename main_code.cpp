@@ -302,15 +302,24 @@ int main()
   cout << "Reconstructed image saved as " << outputFilename << endl;
   // 1. Add the image to the repository
   string gitAddCommand = "git add " + outputFilename;
-  system(gitAddCommand.c_str());
+  int addResult = system(gitAddCommand.c_str());
+  if (addResult != 0) {
+    cerr << "Error adding image to Git: " << addResult << endl;
+  }
 
   // 2. Commit the changes
   string gitCommitCommand = "git commit -m \"Add reconstructed image\"";
-  system(gitCommitCommand.c_str());
+  int commitResult = system(gitCommitCommand.c_str());
+  if (commitResult != 0) {
+    cerr << "Error committing changes to Git: " << commitResult << endl;
+  }
 
   // 3. Push to GitHub
   string gitPushCommand = "git push origin main"; // Replace 'main' with your branch name if needed
-  system(gitPushCommand.c_str());
+  int pushResult = system(gitPushCommand.c_str());
+  if (pushResult != 0) {
+    cerr << "Error pushing changes to GitHub: " << pushResult << endl;
+  }
   
   return 0;
 }
