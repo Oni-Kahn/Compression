@@ -212,6 +212,34 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
 
 int main() 
 {
+  //test for IDCT
+  // Create a small test matrix (e.g., 8x8) with some non-zero values
+  vector<vector<double>> testDct = 
+  {
+    {10.0, 5.0, 2.0, 1.0, 3.0, 4.0, 5.0, 6.0},
+    {3.0, 1.0, -2.0, 1.0, -3.0, 4.0, 5.0, 6.0},
+    {-3.0, 1.0, -2.0, 1.0, 3.0, -4.0, -5.0, 6.0},
+    {-3.0, -1.0, -2.0, 1.0, -3.0, 4.0, -5.0, 6.0},
+    {3.0, -1.0, 2.0, 1.0, 3.0, 4.0, -5.0, 6.0},
+    {-3.0, 1.0, 2.0, 1.0, 3.0, 4.0, 5.0, -6.0},
+    {3.0, -1.0, -2.0, 1.0, -3.0, -4.0, 5.0, -6.0},
+    {3.0, 1.0, -2.0, 1.0, 3.0, -4.0, 5.0, -6.0},
+  };
+
+  // Apply IDCT
+  vector<vector<double>> result = idctTransform(testDct);
+
+  // Print the result
+  for (int i = 0; i < 8; ++i) 
+  {
+    for (int j = 0; j < 8; ++j) 
+    {
+      std::cout << result[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  //image section
+  /*
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image 
   
@@ -340,7 +368,7 @@ int main()
   }
   cout << "Reconstructed image saved as " << outputFilename << endl;
   cout << "Image dimensions: " << width << " x " << height << endl;
-  cout << "Number of channels: " << channels << endl;
+  cout << "Number of channels: " << channels << endl;*/
   
   return 0;
 }
