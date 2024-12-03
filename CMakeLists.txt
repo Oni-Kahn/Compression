@@ -3,7 +3,8 @@ project(Compression)  # Set the project name
 
 # Find the matplotlib-cpp library
 set(matplotlib-cpp_DIR /home/runner/work/Compression/Compression/matplotlib-cpp/build)
-find_package(matplotlib-cpp REQUIRED)
+set(matplotlib-cpp_CONFIG ${matplotlib-cpp_DIR}/matplotlib-cppConfig.cmake)
+find_package(matplotlib-cpp REQUIRED CONFIG ${matplotlib-cpp_CONFIG})
 
 # Add your executable
 add_executable(Compression main_code.cpp)  # Replace 'compression' with your desired executable name
