@@ -287,6 +287,8 @@ int main()
     return 1;
   }
   cout << "Reconstructed image saved as " << outputFilename << endl;
+  cout << "Image dimensions: " << width << " x " << height << endl;
+  cout << "Number of channels: " << channels << endl;
   
   // 1. Add the image to the repository
   string gitAddCommand = "git add " + outputFilename;
