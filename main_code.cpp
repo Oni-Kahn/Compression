@@ -300,6 +300,7 @@ int main()
     return 1;
   }
   cout << "Reconstructed image saved as " << outputFilename << endl;
+  
   // 1. Add the image to the repository
   string gitAddCommand = "git add " + outputFilename;
   int addResult = system(gitAddCommand.c_str());
