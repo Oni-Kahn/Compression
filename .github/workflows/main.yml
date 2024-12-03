@@ -59,7 +59,7 @@ jobs:
 
     - name: Run
       working-directory: ./build
-      run: ./main_code.cpp # Replace with your executable name
+      run: ./Compression # Replace with your executable name
 
     # Add this step to upload artifacts
     - uses: actions/upload-artifact@v3
