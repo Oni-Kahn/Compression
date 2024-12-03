@@ -71,6 +71,7 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
         }
       }
       matrix[i][j] = (2.0 / sqrt(height * width)) * sum; // Store the calculated pixel value
+      matrix[i][j] = std::max(0.0, std::min(1.0, matrix[i][j]));
     }
   }
   return matrix; // Return the 2D vector of reconstructed image data
