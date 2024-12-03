@@ -189,9 +189,6 @@ int main()
     cerr << "Error loading image: " << stbi_failure_reason() << endl;
     return 1;
   }
-  // Print image dimensions and channel count
-  cout << "Image dimensions: " << width << " x " << height << endl;
-  cout << "Number of channels: " << channels << endl;
   
   //checks for image dimensions and data size
   size_t imageDataSize = width * height * channels * sizeof(unsigned char);
@@ -289,27 +286,6 @@ int main()
   cout << "Reconstructed image saved as " << outputFilename << endl;
   cout << "Image dimensions: " << width << " x " << height << endl;
   cout << "Number of channels: " << channels << endl;
-  
-  // 1. Add the image to the repository
-  string gitAddCommand = "git add " + outputFilename;
-  int addResult = system(gitAddCommand.c_str());
-  if (addResult != 0) {
-    cerr << "Error adding image to Git: " << addResult << endl;
-  }
-
-  // 2. Commit the changes
-  string gitCommitCommand = "git commit -m \"Add reconstructed image\"";
-  int commitResult = system(gitCommitCommand.c_str());
-  if (commitResult != 0) {
-    cerr << "Error committing changes to Git: " << commitResult << endl;
-  }
-
-  // 3. Push to GitHub
-  string gitPushCommand = "git push origin main"; // Replace 'main' with your branch name if needed
-  int pushResult = system(gitPushCommand.c_str());
-  if (pushResult != 0) {
-    cerr << "Error pushing changes to GitHub: " << pushResult << endl;
-  }
   
   return 0;
 }
