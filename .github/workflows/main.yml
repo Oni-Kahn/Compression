@@ -76,4 +76,6 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
           name: Graphs  # Or any name you prefer
-          path: ./build/*.png # Assuming your graphs are in the build directory
+          path: |
+            ./build/*.png
+            ./build/*.jpg
