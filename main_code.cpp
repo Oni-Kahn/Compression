@@ -77,7 +77,7 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
       {                                          // Add this loop
         for (int j = 0; j < 8; ++j) 
         {                                        // Add this loop
-          cout << reconstructedBlock[i][j] << " ";                          // Add this line
+          cout << matrix[i][j] << " ";                          // Add this line
         }
         cout << endl;
       }
