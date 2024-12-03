@@ -5,7 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
-cout << "You have reached checkpoint 1"
+std::cout << "You have reached checkpoint 1" << std::endl;
 
 //include necessary headers for image processing
 #define STB_IMAGE_IMPLEMENTATION
@@ -14,7 +14,7 @@ cout << "You have reached checkpoint 1"
 #include "stb_image_write.h"
 
 using namespace std;
-cout << "You have reached checkpoint 2"
+std::cout << "You have reached checkpoint 2" << std::endl;
 
 //function to preform 2D DCT
 vector<vector<double>> dctTransform(const vector<vector<double>>& matrix)
@@ -43,7 +43,7 @@ vector<vector<double>> dctTransform(const vector<vector<double>>& matrix)
   }
   return dct; //return the 2D vector of DCT coeffs
 }
-cout << "You have reached checkpoint 3"
+std::cout << "You have reached checkpoint 3" << std::endl;
 // Function to perform inverse 2D DCT (IDCT)
 vector<vector<double>> idctTransform(const vector<vector<double>>& dct) 
 {
@@ -71,7 +71,7 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
   }
   return matrix; // Return the 2D vector of reconstructed image data
 }
-cout << "You have reached checkpoint 4"
+std::cout << "You have reached checkpoint 4" << std::endl;
 // Function to quantize the DCT coefficients
 vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int quality) 
 {
@@ -114,7 +114,7 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
 
   return quantizedDCT; // Return the 2D vector of quantized DCT coefficients
 }
-cout << "You have reached checkpoint 5"
+std::cout << "You have reached checkpoint 5" << std::endl;
 // Function to dequantize the DCT coefficients
 vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT, int quality) 
 {
@@ -157,12 +157,12 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
 
   return dct; // Return the 2D vector of dequantized DCT coefficients
 }
-cout << "You have reached checkpoint 6"
+std::cout << "You have reached checkpoint 6" << std::endl;
 int main() 
 {
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image 
-  cout << "You have reached checkpoint 7"
+  std::cout << "You have reached checkpoint 7" << std::endl;
   //step 2: load the image data
   int width, height, channels;
   unsigned char* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 0);
@@ -171,7 +171,7 @@ int main()
     cerr << "Error loading image: " << stbi_failure_reason() << endl;
     return 1;
   }
-  cout << "You have reached checkpoint 8"
+  std::cout << "You have reached checkpoint 8" << std::endl;
   //checks for image dimensions and data size
   size_t imageDataSize = width * height * channels * sizeof(unsigned char);
   if (width <= 0 || height <= 0 || channels <= 0 || (width * height * channels) > imageDataSize) 
@@ -179,7 +179,7 @@ int main()
     cerr << "Error: Invalid image data." << endl;
     return 1;
   }
-  cout << "You have reached checkpoint 9"
+  std::cout << "You have reached checkpoint 9" << std::endl;
   //step 3: convert the image data to a 2D vector of doubles (grayscale)
   vector<vector<double>> imageMatrix(height, vector<double>(width));
   for (int i = 0; i < height; ++i) 
@@ -205,22 +205,22 @@ int main()
     }
   }
   stbi_image_free(imageData); //free the original image data
-  cout << "You have reached checkpoint 10"
+  std::cout << "You have reached checkpoint 10" << std::endl;
   //step 4: perform DCT
   vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
-  cout << "You have reached checkpoint 11"
+  std::cout << "You have reached checkpoint 11" << std::endl;
   //step 5: quantize DCT coefficients and adjust quality as needed
   int quality = 50; // You can get this from the user or another source
   //cout << "Enter desired quality (0-100): ";
   //cin >> quality;
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  cout << "You have reached checkpoint 12"
+  std::cout << "You have reached checkpoint 12" << std::endl;
   //step 6: quantize DCT coefficients
   vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  cout << "You have reached checkpoint 13"
+  std::cout << "You have reached checkpoint 13" << std::endl;
   //step 7: perform inverse DCT
   vector<vector<double>> reconstructedImage = idctTransform(dequantizedDCT);
-  cout << "You have reached checkpoint 14"
+  std::cout << "You have reached checkpoint 14" << std::endl;
   //step 8: convert back to an unsigned char format for saving
   vector<unsigned char> outputData(height * width);
   for (int i = 0; i < height; ++i) 
@@ -230,7 +230,7 @@ int main()
       outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
     }
   }
-  cout << "You have reached checkpoint 15"
+  std::cout << "You have reached checkpoint 15" << std::endl;
   //step 9: save the reconstructed image
   string outputFilename = "reconstructed_" + filename;
   if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
