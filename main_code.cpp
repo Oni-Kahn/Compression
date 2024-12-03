@@ -179,8 +179,6 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
   // --- Add the following to print DCT coefficients ---
-  vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
-
   cout << "DCT coefficients (after):" << endl;
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
