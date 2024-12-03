@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)  # Specify the minimum CMake version
 project(Compression)  # Set the project name
 
 # Find the matplotlib-cpp library
-set(matplotlib-cpp_DIR /usr/local/lib/matplotlib_cpp/cmake)
+set(matplotlib-cpp_DIR /home/runner/work/Compression/Compression/matplotlib-cpp/build)
 find_package(matplotlib-cpp REQUIRED)
 
 # Add your executable
