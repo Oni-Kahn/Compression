@@ -60,8 +60,8 @@ jobs:
     - name: Copy Images to Build Directory
       run: |
         cp cat_test_256x256.jpg build/
-        cp cat_test_256x256(2).jpg build/
-        cp cat_test_800x800(color).jpg build/
+        cp "cat_test_256x256(2).jpg" build/
+        cp "cat_test_800x800(color).jpg" build/
         cp final_cat_test_1200x600.png build/
 
     - name: List Files in Build Directory
