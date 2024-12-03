@@ -264,6 +264,15 @@ int main()
       }
     }
   }
+  // Print some pixel values from reconstructedImage
+  for (int i = 0; i < 10; ++i) 
+  {
+    for (int j = 0; j < 10; ++j) 
+    {
+      cout << reconstructedImage[i][j] << " ";
+    }
+    cout << endl;
+  }
 
   
   //step 8: convert back to an unsigned char format for saving
