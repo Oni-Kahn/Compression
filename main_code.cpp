@@ -164,14 +164,6 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
 {
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
-  // --- Add the following to print DCT coefficients ---
-  cout << "DCT coefficients (after):" << endl;
-  for (int i = 0; i < 8; ++i) {
-    for (int j = 0; j < 8; ++j) {
-      cout << dctCoefficients[i][j] << " ";
-    }
-    cout << endl;
-  }
 
   // 2. Quantization
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
@@ -189,7 +181,7 @@ int main()
 {
   //test for IDCT
   // Create a small test matrix (e.g., 8x8) with some non-zero values
-  vector<vector<double>> testMatrix = 
+  /*vector<vector<double>> testMatrix = 
   {
     {16.0, 11.0, 10.0, 16.0, 24.0, 40.0, 51.0, 61.0}, 
     {12.0, 12.0, 14.0, 19.0, 26.0, 58.0, 60.0, 55.0}, 
@@ -227,9 +219,9 @@ int main()
       std::cout << result[i][j] << " ";
     }
     std::cout << std::endl;
-  }
+  }*/
   //image section
-  /*
+  
   //step 1: call in image that the user uploaded
   string filename = "cat_test_256x256.jpg"; //test image 
   
@@ -274,6 +266,7 @@ int main()
       imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
     }
   }
+  
   // After converting imageData to imageMatrix
   cout << "Original image pixel values:" << endl;
   for (int i = 0; i < 10; ++i) 
@@ -322,22 +315,11 @@ int main()
         {
           int imgU = std::min(i + u, height - 1);
           int imgV = std::min(j + v, width - 1);
-          reconstructedImage[imgU][imgV] = processedBlock[u][v];
+          reconstructedImage[imgU][imgV] = processedBlock[u][v];          
         }
       }
     }
   }
-  
-  // Print some pixel values from reconstructedImage
-  for (int i = 0; i < 10; ++i) 
-  {
-    for (int j = 0; j < 10; ++j) 
-    {
-      cout << reconstructedImage[i][j] << " ";
-    }
-    cout << endl;
-  }
-
   
   //step 8: convert back to an unsigned char format for saving
   vector<unsigned char> outputData(height * width);
@@ -358,7 +340,7 @@ int main()
   }
   cout << "Reconstructed image saved as " << outputFilename << endl;
   cout << "Image dimensions: " << width << " x " << height << endl;
-  cout << "Number of channels: " << channels << endl;*/
+  cout << "Number of channels: " << channels << endl;
   
   return 0;
 }
