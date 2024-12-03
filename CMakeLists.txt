@@ -8,6 +8,3 @@ find_package(matplotlib_cpp REQUIRED CONFIG)
 
 # Add your executable
 add_executable(Compression main_code.cpp)  # Replace 'compression' with your desired executable name
-
-# Link libraries
-target_link_libraries(Compression matplotlib-cpp::matplotlib-cpp)
