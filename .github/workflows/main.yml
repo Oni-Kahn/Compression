@@ -57,6 +57,10 @@ jobs:
       working-directory: ./build
       run: cmake --build . --config Release
 
+    - name: List Files in Build Directory
+      working-directory: ./build
+      run: ls -lR  # List files recursively
+
     - name: Run
       working-directory: ./build
       run: ./Compression # Replace with your executable name
