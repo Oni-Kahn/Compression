@@ -39,6 +39,10 @@ vector<vector<double>> dctTransform(const vector<vector<double>>& matrix)
         }
       }
       dct[u][v] = (2.0 / sqrt(height * width)) * cu * cv * sum; //store calc DCT coeff
+      if (u == 0 && v == 0)
+      {
+        dct[u][v] /= 8.0;
+      }
     }
   }
   return dct; //return the 2D vector of DCT coeffs
