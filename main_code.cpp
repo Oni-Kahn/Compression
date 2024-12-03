@@ -222,6 +222,16 @@ int main()
       imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
     }
   }
+  // After converting imageData to imageMatrix
+  cout << "Original image pixel values:" << endl;
+  for (int i = 0; i < 10; ++i) 
+  {
+    for (int j = 0; j < 10; ++j) 
+    {
+      cout << imageMatrix[i][j] << " "; 
+    }
+    cout << endl;
+  }
   stbi_image_free(imageData); //free the original image data
   
   //step 5: quantize DCT coefficients and adjust quality as needed
