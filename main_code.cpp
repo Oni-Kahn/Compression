@@ -184,8 +184,22 @@ int main()
   {
     for (int j = 0; j < width; ++j) 
     {
+      // Calculate the index into the imageData array
+        int index = i * width * channels + j * channels; 
+
+        // Check if the index is within the bounds of the array
+        if (index >= 0 && index < imageDataSize) 
+        {
+            imageMatrix[i][j] = static_cast<double>(imageData[index]) / 255.0;
+        } 
+        else 
+        {
+            // Handle the error (e.g., print an error message, set a default value)
+            cerr << "Error: Index out of bounds." << endl;
+            imageMatrix[i][j] = 0.0; // Or another default value
+        }
       // Assuming grayscale, take the average of R, G, B values if the image is not grayscale
-      imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
+      //imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
     }
   }
   stbi_image_free(imageData); //free the original image data
