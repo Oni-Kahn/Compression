@@ -241,6 +241,7 @@ int main()
 
   //initialize reconstructedImage 
   vector<vector<double>> reconstructedImage(height, vector<double>(width, 0.0));
+  
   // Process the image in 8x8 blocks
   for (int i = 0; i < height; i += 8) 
   {
@@ -274,6 +275,18 @@ int main()
       }
     }
   }
+  
+  // --- Add the following to print DCT coefficients ---
+  vector<vector<double>> dctCoefficients = dctTransform(imageMatrix);
+
+  cout << "DCT coefficients:" << endl;
+  for (int i = 0; i < 10; ++i) {
+    for (int j = 0; j < 10; ++j) {
+      cout << dctCoefficients[i][j] << " ";
+    }
+    cout << endl;
+  }
+  
   // Print some pixel values from reconstructedImage
   for (int i = 0; i < 10; ++i) 
   {
