@@ -223,7 +223,7 @@ int main()
   //image section
   
   //step 1: call in image that the user uploaded
-  string filename = "cat_test_800x800(color).png"; //test image 
+  string filename = "cat_test_800x800(color).jpg"; //test image 
   
   //step 2: load the image data
   int width, height, channels;
