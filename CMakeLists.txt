@@ -13,3 +13,6 @@ include_directories(${Python3_INCLUDE_DIRS})
 
 # Add your executable
 add_executable(Compression main_code.cpp)  # Replace 'compression' with your desired executable name
+
+# Link with Python libraries 
+target_link_libraries(Compression PRIVATE ${Python3_LIBRARIES}) 
