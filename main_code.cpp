@@ -351,13 +351,17 @@ int main()
             reconstructedChannels[c][imgU][imgV] = processedBlock[u][v];          
           }
         }
+        //if this is the last block, plot
+        if (c == channels - 1 && i == height - 8 && j == width - 8)
+        {
+          // Plot the matrices once per channel
+          plotMatrix(dctCoefficients, "DCT Coefficients");
+          plotMatrix(quantizedDCT, "Quantized DCT");
+          plotMatrix(dequantizedDCT, "De-Quantized DCT");
+          plotMatrix(reconstructedBlock, "Reconstructed Block");
+        }
       }
     }
-    // Plot the matrices once per channel
-    plotMatrix(dctCoefficients, "DCT Coefficients (Channel " + to_string(c) + ")");
-    plotMatrix(quantizedDCT, "Quantized DCT (Channel " + to_string(c) + ")");
-    plotMatrix(dequantizedDCT, "De-Quantized DCT (Channel " + to_string(c) + ")");
-    plotMatrix(reconstructedBlock, "Reconstructed Block (Channel " + to_string(c) + ")");
   }
   //step 8: convert back to an unsigned char format for saving
   vector<unsigned char> outputData(height * width * channels);
