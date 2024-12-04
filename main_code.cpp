@@ -90,13 +90,22 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
   };
 
   // Adjust quantization matrix based on quality (lower quality = more compression)
-  double scalingFactor = (quality < 50) ? (5000.0 / quality) : (200.0 - 2 * quality);
+  double scalingFactor = 1.0;
+  if (quality < 50) 
+  {
+    scaleFactor = 50.0 / quality;
+  } 
+  else if (quality > 50) 
+  {
+    scaleFactor = 2.0 - (quality / 50.0);
+  }
+
+  //scale the quant matrix
   for (auto& row : quantizationMatrix) 
   {
     for (auto& val : row) 
     {
-      val = static_cast<int>(val * scalingFactor / 100.0);
-      if (val < 1) val = 1; // Prevent divide by zero
+      val *= scaleFactor;
     }
   }
 
@@ -108,8 +117,11 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
   {
     for (int v = 0; v < width; ++v) 
     {
-      // Quantize the DCT coefficient by dividing it by the corresponding value in the quantization matrix
-      quantizedDCT[u][v] = round(dct[u][v] / quantizationMatrix[u][v]); 
+      // Quantize the DCT coefficient 
+      double quantizedVal = dct[u][v] / quantizationMatrix[u][v];
+
+      //round to nearest int but keep small val
+      quantizedDCT[u][v] = (std::abs(quantizedVal) > 0.001) ? round(quantizedVal) : 0.0; 
     }
   }
 
@@ -132,14 +144,23 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     {72, 92, 95, 98, 112, 100, 103, 99}
   };
 
-  // Adjust quantization matrix based on quality (lower quality = more compression) - Same as in quantizeDCT()
-  double scalingFactor = (quality < 50) ? (5000.0 / quality) : (200.0 - 2 * quality);
+  // Compute scaling factor
+  double scaleFactor = 1.0;
+  if (quality < 50) 
+  {
+    scaleFactor = 50.0 / quality;
+  } 
+  else if (quality > 50) 
+  {
+    scaleFactor = 2.0 - (quality / 50.0);
+  }
+
+  //scale quantization matrix
   for (auto& row : quantizationMatrix) 
   {
     for (auto& val : row) 
     {
-      val = static_cast<int>(val * scalingFactor / 100.0);
-      if (val < 1) val = 1; // Prevent divide by zero
+      val *= scaleFactor;
     }
   }
 
@@ -152,7 +173,7 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     for (int v = 0; v < width; ++v) 
     {
       // Dequantize the DCT coefficient by multiplying it by the corresponding value in the quantization matrix
-      dct[u][v] = round(quantizedDCT[u][v] * quantizationMatrix[u][v]); 
+      dct[u][v] = quantizedDCT[u][v] * quantizationMatrix[u][v]; 
     }
   }
 
