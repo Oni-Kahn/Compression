@@ -25,7 +25,7 @@ jobs:
         cd ../../
 
     - name: Check matplotlib
-      run: echo "/usr/local/lib/python3.10/dist-packages/matplotlibcpp" >> $GITHUB_PATH
+      run: ls -l matplotlib-cpp
 
     - name: Configure CMake (matplotlib-cpp)
       working-directory: ./matplotlib-cpp/build
