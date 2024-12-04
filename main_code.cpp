@@ -41,7 +41,14 @@ vector<vector<double>> dctTransform(const vector<vector<double>>& matrix)
       dct[u][v] = (2.0 / sqrt(height * width)) * cu * cv * sum; //store calc DCT coeff
     }
   }
-  
+  // Log transformation to compress the values
+  for (int u = 0; u < height; ++u)
+  {
+    for (int v = 0; v < width; ++v)
+    {
+      dct[u][v] = std::copysign(std::log(1.0 + std::abs(dct[u][v])), dct[u][v]);
+    }
+  }
   return dct; //return the 2D vector of DCT coeffs
 }
 
@@ -87,17 +94,53 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
     };
 
     // Adjust quality factor for scaling
-    double qualityFactor = (100.0 - quality) / 50.0;
+    double qualityFactor = std::max(0.01, (100.0 - quality) / 50.0);
 
     int height = dct.size();
     int width = dct[0].size();
     vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
 
-    // Quantize the DCT coefficients
+    double maxCoeff = 0.0;
+    for (const auto& row : dct) {
+        for (double val : row) {
+            maxCoeff = std::max(maxCoeff, std::abs(val));
+        }
+    }
+    maxCoeff = std::max(maxCoeff, 1e-10);  // Prevent division by zero
+
+    for (int u = 0; u < height; ++u) 
+    {
+        for (int v = 0; v < width; ++v) 
+        {
+            double scaledQuantization = quantizationMatrix[u][v] * qualityFactor;
+            double normalizedCoeff = std::abs(dct[u][v]) / maxCoeff;
+            double threshold = scaledQuantization * (1.0 + std::log1p(normalizedCoeff));
+
+            if (std::abs(dct[u][v]) > threshold) {
+                quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
+            }
+            else if (std::abs(dct[u][v]) > scaledQuantization * 0.01) {
+                quantizedDCT[u][v] = std::copysign(scaledQuantization * 0.01, dct[u][v]);
+            }
+        }
+    }
+
+    // Normalize the quantized DCT coefficients to avoid clipping and improve contrast
+    double minVal = 1e10;
+    double maxVal = -1e10;
+
+    // Find min and max values
+    for (const auto& row : quantizedDCT) {
+        for (double val : row) {
+            minVal = std::min(minVal, val);
+            maxVal = std::max(maxVal, val);
+        }
+    }
+
+    // Normalize
     for (int u = 0; u < height; ++u) {
         for (int v = 0; v < width; ++v) {
-            double quantizedCoeff = round(dct[u][v] / (quantizationMatrix[u][v] * qualityFactor));
-            quantizedDCT[u][v] = quantizedCoeff;
+            quantizedDCT[u][v] = (quantizedDCT[u][v] - minVal) / (maxVal - minVal);
         }
     }
 
