@@ -73,10 +73,9 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
   return matrix; // Return the 2D vector of reconstructed image data
 }
  
-vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int quality) 
-{
-    vector<vector<int>> quantizationMatrix = 
-    {
+// Quantize DCT coefficients
+vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int quality) {
+    vector<vector<int>> quantizationMatrix = {
         {16, 11, 10, 16, 24, 40, 51, 61},
         {12, 12, 14, 19, 26, 58, 60, 55},
         {14, 13, 16, 24, 40, 57, 69, 56},
@@ -87,95 +86,53 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
         {72, 92, 95, 98, 112, 100, 103, 99}
     };
 
-    // Very fine-grained quality scaling
-    double qualityFactor = std::max(0.01, (100.0 - quality) / 50.0);
+    // Adjust quality factor for scaling
+    double qualityFactor = (100.0 - quality) / 50.0;
 
     int height = dct.size();
     int width = dct[0].size();
     vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
 
-    // Find the maximum absolute coefficient for normalization
-    double maxCoeff = 0.0;
-    for (const auto& row : dct) {
-        for (double val : row) {
-            maxCoeff = std::max(maxCoeff, std::abs(val));
+    // Quantize the DCT coefficients
+    for (int u = 0; u < height; ++u) {
+        for (int v = 0; v < width; ++v) {
+            double quantizedCoeff = round(dct[u][v] / (quantizationMatrix[u][v] * qualityFactor));
+            quantizedDCT[u][v] = quantizedCoeff;
         }
     }
 
-    // Prevent division by zero
-    maxCoeff = std::max(maxCoeff, 1e-10);
-
-    for (int u = 0; u < height; ++u) 
-    {
-        for (int v = 0; v < width; ++v) 
-        {
-            // Adaptive scaling considering coefficient magnitude
-            double scaledQuantization = quantizationMatrix[u][v] * qualityFactor;
-            
-            // Normalize coefficient relative to max coefficient
-            double normalizedCoeff = std::abs(dct[u][v]) / maxCoeff;
-            
-            // More nuanced preservation threshold
-            double threshold = scaledQuantization * (1.0 + std::log1p(normalizedCoeff));
-            
-            // Preserve coefficients
-            if (std::abs(dct[u][v]) > threshold) {
-                // Quantize with preservation of sign
-                quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
-            }
-            else if (std::abs(dct[u][v]) > scaledQuantization * 0.01) {
-                // Preserve very small but non-negligible coefficients
-                quantizedDCT[u][v] = std::copysign(scaledQuantization * 0.01, dct[u][v]);
-            }
-        }
-    }
     return quantizedDCT;
 }
 
-// Function to dequantize the DCT coefficients
-vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT, int quality) 
-{
-  // Define a quantization matrix (you can adjust these values) - Same as in quantizeDCT()
-  vector<vector<int>> quantizationMatrix = 
-  {
-    {16, 11, 10, 16, 24, 40, 51, 61},
-    {12, 12, 14, 19, 26, 58, 60, 55},
-    {14, 13, 16, 24, 40, 57, 69, 56},
-    {14, 17, 22, 29, 51, 87, 80, 62},
-    {18, 22, 37, 56, 68, 109, 103, 77},
-    {24, 35, 55, 64, 81, 104, 113, 92},
-    {49, 64, 78, 87, 103, 121, 120, 101},
-    {72, 92, 95, 98, 112, 100, 103, 99}
-  };
+// Dequantize DCT coefficients
+vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT, int quality) {
+    vector<vector<int>> quantizationMatrix = {
+        {16, 11, 10, 16, 24, 40, 51, 61},
+        {12, 12, 14, 19, 26, 58, 60, 55},
+        {14, 13, 16, 24, 40, 57, 69, 56},
+        {14, 17, 22, 29, 51, 87, 80, 62},
+        {18, 22, 37, 56, 68, 109, 103, 77},
+        {24, 35, 55, 64, 81, 104, 113, 92},
+        {49, 64, 78, 87, 103, 121, 120, 101},
+        {72, 92, 95, 98, 112, 100, 103, 99}
+    };
 
-  // Adjust quantization for very small values
-  double qualityScale = (quality < 50) ? (5000.0 / quality)/100.0 : (200.0 - quality*2.0 / 100.0);
+    double qualityScale = (quality < 50) ? (5000.0 / quality) / 100.0 : (200.0 - quality * 2.0 / 100.0);
 
-  int height = quantizedDCT.size();
-  int width = quantizedDCT[0].size();
-  vector<vector<double>> dct(height, vector<double>(width, 0.0));
+    int height = quantizedDCT.size();
+    int width = quantizedDCT[0].size();
+    vector<vector<double>> dct(height, vector<double>(width, 0.0));
 
-  for (int u = 0; u < height; ++u) 
-  {
-    for (int v = 0; v < width; ++v) 
-    {
-      // Scale the quantization matrix
-      double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
-
-      // More nuanced preservation threshold
-      double threshold = scaledQuantization * (1.0 + log(std::abs(dct[u][v]) + 1.0));
-      
-      // Use a lower threshold for preservation
-      if (std::abs(dct[u][v]) > threshold) 
-      {
-        // Quantize with more precision
-        dct[u][v] = std::round(quantizedDCT[u][v] / scaledQuantization) * scaledQuantization;
-      }
+    for (int u = 0; u < height; ++u) {
+        for (int v = 0; v < width; ++v) {
+            // Dequantize the coefficients
+            dct[u][v] = quantizedDCT[u][v] * quantizationMatrix[u][v] * qualityScale;
+        }
     }
 
-    return dct; // Return the 2D vector of quantized DCT coefficients
-  }
+    return dct;
 }
+
 
 // Function to process an 8x8 block of the image
 vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality) 
