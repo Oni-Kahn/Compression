@@ -222,7 +222,7 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
   plt::save(filename);
   cout << "Plot saved as " << filename << endl;
 
-  plt::show(block=true);
+  plt::show();
 }
 
 // Function to process an 8x8 block of the image
