@@ -371,5 +371,10 @@ int main()
   cout << "Image dimensions: " << width << " x " << height << endl;
   cout << "Number of channels: " << channels << endl;
   
+  plotMatrix(dctCoefficients, "DCT Coefficients");
+  plotMatrix(quantizedDCT, "Quantized DCT");
+  plotMatrix(dequantizedDCT, "De-Quantized DCT");
+  plotMatrix(reconstructedBlock, "Reconstructed Block");
+  
   return 0;
 }
