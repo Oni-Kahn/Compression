@@ -237,19 +237,19 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 }
 
 // Function to process an 8x8 block of the image
-vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality, vector<vector<double>>& dctCoefficients, vector<vector<double>>& quantizedDCT, vector<vector<double>>& dequantizedDCT) 
+vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality, 
+                                          vector<vector<double>>& dctCoefficients, 
+                                          vector<vector<double>>& quantizedDCT, 
+                                          vector<vector<double>>& dequantizedDCT) 
 {
   // 1. DCT Transform
-  vector<vector<double>> dctCoefficients = dctTransform(block);
-  
+  dctCoefficients = dctTransform(block);
 
   // 2. Quantization
-  vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  
+  quantizedDCT = quantizeDCT(dctCoefficients, quality);
 
   // 3. Dequantization
-  vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-
+  dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
 
   // 4. IDCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
@@ -356,10 +356,6 @@ int main()
   for (int c = 0; c < channels; ++c)
   {
     reconstructedChannels[c] = vector<vector<double>>(height, vector<double>(width,0.0));
-    vector<vector<double>> dctCoefficients(8, vector<double>(8));
-    vector<vector<double>> quantizedDCT(8, vector<double>(8));
-    vector<vector<double>> dequantizedDCT(8, vector<double>(8));
-    vector<vector<double>> reconstructedBlock(8, vector<double>(8));
     
     // Process blocks per channel
     for (int i = 0; i < height; i += 8) 
@@ -379,7 +375,11 @@ int main()
             block[u][v] = imageMatrices[c][imgU][imgV]; 
           }
         }
-
+        // Declare matrices for storing intermediate results
+        vector<vector<double>> dctCoefficients(8, vector<double>(8));
+        vector<vector<double>> quantizedDCT(8, vector<double>(8));
+        vector<vector<double>> dequantizedDCT(8, vector<double>(8));
+        
         // Process the block for this channel
         vector<vector<double>> reconstructedBlock = processBlock(block, quality, dctCoefficients, quantizedDCT, dequantizedDCT);
         // Copy the processed block back into reconstructed channel
