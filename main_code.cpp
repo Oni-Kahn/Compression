@@ -204,27 +204,14 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 {
   int height = matrix.size();
   int width = matrix[0].size();
-
-  //Find min and max val
-  double minVal = 1e10;
-  double maxVal = -1e10;
-  for (const auto& row : matrix)
-  {
-    for (double val : row)
-    {
-      minVal = std::min(minVal, val);
-      maxVal = std::max(maxVal, val);
-    }
-  }
-
+  
   // Convert to a 1D vector of unsigned char
   vector<unsigned char> imageData(height * width); 
   for (int i = 0; i < height; ++i) 
   {
     for (int j = 0; j < width; ++j) 
     {
-      double normalizedVal = ((matrix[i][j] - minVal) / (maxVal - minVal));
-      imageData[i * width + j] = static_cast<unsigned char>(normalizedVal * 255.0); 
+      imageData[i * width + j] = static_cast<unsigned char>(std::max(0.0, std::min(255.0, matrix[i][j] * 255.0))); 
     }
   }
 
@@ -391,10 +378,10 @@ int main()
         if (c == channels - 1 && i == height - 8 && j == width - 8)
         {
           // Plot the matrices once per channel
-          plotMatrix(dctCoefficients, "DCT Coefficients");
-          plotMatrix(quantizedDCT, "Quantized DCT");
-          plotMatrix(dequantizedDCT, "De-Quantized DCT");
-          plotMatrix(reconstructedBlock, "Reconstructed Block");
+          plotMatrix(dctCoefficients, "DCT Coefficients_" + to_string(i) + "_" + to_string(j) + ".png");
+          plotMatrix(quantizedDCT, "Quantized DCT_" + to_string(i) + "_" + to_string(j) + ".png");
+          plotMatrix(dequantizedDCT, "De-Quantized DCT_" + to_string(i) + "_" + to_string(j) + ".png");
+          plotMatrix(reconstructedBlock, "Reconstructed Block_" + to_string(i) + "_" + to_string(j) + ".png");
         }
       }
     }
