@@ -163,22 +163,42 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
         {72, 92, 95, 98, 112, 100, 103, 99}
     };
 
-    double qualityScale = (quality < 50) ? (5000.0 / quality) / 100.0 : (200.0 - quality * 2.0 / 100.0);
+    // Adjust quality factor for scaling
+    double qualityFactor = std::max(0.01, (100.0 - quality) / 50.0);
 
     int height = quantizedDCT.size();
     int width = quantizedDCT[0].size();
-    vector<vector<double>> dct(height, vector<double>(width, 0.0));
+    vector<vector<double>> dequantizedDCT(height, vector<double>(width, 0.0));
 
+    // Dequantization process
     for (int u = 0; u < height; ++u) {
         for (int v = 0; v < width; ++v) {
-            // Dequantize the coefficients
-            dct[u][v] = quantizedDCT[u][v] * quantizationMatrix[u][v] * qualityScale;
+            double scaledQuantization = quantizationMatrix[u][v] * qualityFactor;
+            dequantizedDCT[u][v] = quantizedDCT[u][v] * scaledQuantization;
         }
     }
 
-    return dct;
-}
+    // Re-normalize the dequantized DCT coefficients to restore the original range
+    double minVal = 1e10;
+    double maxVal = -1e10;
 
+    // Find min and max values
+    for (const auto& row : dequantizedDCT) {
+        for (double val : row) {
+            minVal = std::min(minVal, val);
+            maxVal = std::max(maxVal, val);
+        }
+    }
+
+    // Normalize
+    for (int u = 0; u < height; ++u) {
+        for (int v = 0; v < width; ++v) {
+            dequantizedDCT[u][v] = (dequantizedDCT[u][v] - minVal) / (maxVal - minVal);
+        }
+    }
+
+    return dequantizedDCT;
+}
 //plot function
 void plotMatrix(const vector<vector<double>>& matrix, const string& title) 
 {
