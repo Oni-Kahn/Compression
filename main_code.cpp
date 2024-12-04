@@ -72,7 +72,7 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
   }
   return matrix; // Return the 2D vector of reconstructed image data
 }
-
+ 
 // Function to quantize the DCT coefficients
 vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int quality) 
 {
