@@ -179,12 +179,22 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     return dct;
 }
 
-// Function to plot a 2D matrix
+//plot function
 void plotMatrix(const vector<vector<double>>& matrix, const string& title) {
+    int height = matrix.size();
+    int width = matrix[0].size();
+
+    // Convert to a 1D vector of unsigned char
+    vector<unsigned char> imageData(height * width); 
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            imageData[i * width + j] = static_cast<unsigned char>(matrix[i][j] * 255.0); 
+        }
+    }
+
     plt::figure();
     plt::title(title);
-    plt::imshow(matrix, {{"cmap", "gray"}}); 
-    // Save the plot to a file
+    plt::imshow(imageData.data(), height, width, 1, {{"cmap", "gray"}}); // 1 color channel for grayscale
     string filename = title + ".png";
     plt::save(filename);
     cout << "Plot saved as " << filename << endl;
