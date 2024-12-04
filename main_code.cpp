@@ -180,24 +180,40 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
 }
 
 //plot function
-void plotMatrix(const vector<vector<double>>& matrix, const string& title) {
-    int height = matrix.size();
-    int width = matrix[0].size();
+void plotMatrix(const vector<vector<double>>& matrix, const string& title) 
+{
+  int height = matrix.size();
+  int width = matrix[0].size();
 
-    // Convert to a 1D vector of unsigned char
-    vector<unsigned char> imageData(height * width); 
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            imageData[i * width + j] = static_cast<unsigned char>(matrix[i][j] * 255.0); 
-        }
+  //Find min and max val
+  double minVal = 1e10;
+  double maxVal - -1e10;
+  for (const auto& row : matrix)
+  {
+    for (double val : row)
+    {
+      minVal = std::min(minVal, val);
+      maxVal = std::max(maxVal, val);
     }
+  }
 
-    plt::figure();
-    plt::title(title);
-    plt::imshow(imageData.data(), height, width, 1, {{"cmap", "gray"}}); // 1 color channel for grayscale
-    string filename = title + ".png";
-    plt::save(filename);
-    cout << "Plot saved as " << filename << endl;
+  // Convert to a 1D vector of unsigned char
+  vector<unsigned char> imageData(height * width); 
+  for (int i = 0; i < height; ++i) 
+  {
+    for (int j = 0; j < width; ++j) 
+    {
+      double normalizedVal = (matrix[i][j] - minVal) / maxVal - minVal);
+      imageData[i * width + j] = static_cast<unsigned char>(normalizedVal * 255.0); 
+    }
+  }
+
+  plt::figure();
+  plt::title(title);
+  plt::imshow(imageData.data(), height, width, 1, {{"cmap", "gray"}}); // 1 color channel for grayscale
+  string filename = title + ".png";
+  plt::save(filename);
+  cout << "Plot saved as " << filename << endl;
 }
 
 // Function to process an 8x8 block of the image
