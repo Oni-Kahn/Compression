@@ -89,39 +89,25 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
     {72, 92, 95, 98, 112, 100, 103, 99}
   };
 
-  // Adjust quantization matrix based on quality (lower quality = more compression)
-  double scaleFactor = 1.0;
-  if (quality < 50) 
-  {
-    scaleFactor = 50.0 / quality;
-  } 
-  else if (quality > 50) 
-  {
-    scaleFactor = 2.0 - (quality / 50.0);
-  }
+  // Adjust quantization for very small values
+  double qualityScale = (quality < 50) ? (50.0 / quality) : (2.0 - quality / 50.0);
 
-  //scale the quant matrix
-  for (auto& row : quantizationMatrix) 
-  {
-    for (auto& val : row) 
-    {
-      val *= scaleFactor;
-    }
-  }
-
-  int height = dct.size(); // Get the height of the DCT coefficient matrix
-  int width = dct[0].size(); // Get the width of the DCT coefficient matrix
-  vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0)); // Create a 2D vector to store the quantized DCT coefficients
+  int height = dct.size();
+  int width = dct[0].size();
+  vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
 
   for (int u = 0; u < height; ++u) 
   {
     for (int v = 0; v < width; ++v) 
     {
-      // Quantize the DCT coefficient 
-      double quantizedVal = dct[u][v] / quantizationMatrix[u][v];
-
-      //round to nearest int but keep small val
-      quantizedDCT[u][v] = (std::abs(quantizedVal) > 0.001) ? round(quantizedVal) : 0.0; 
+      // Scale the quantization matrix
+      double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
+      
+      // Use a lower threshold for preservation
+      if (std::abs(dct[u][v]) > scaledQuantization * 0.001) {
+        // Quantize with more precision
+        quantizedDCT[u][v] = dct[u][v] / scaledQuantization;
+      }
     }
   }
 
@@ -144,36 +130,21 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     {72, 92, 95, 98, 112, 100, 103, 99}
   };
 
-  // Compute scaling factor
-  double scaleFactor = 1.0;
-  if (quality < 50) 
-  {
-    scaleFactor = 50.0 / quality;
-  } 
-  else if (quality > 50) 
-  {
-    scaleFactor = 2.0 - (quality / 50.0);
-  }
+  double qualityScale = (quality < 50) ? (50.0 / quality) : (2.0 - quality / 50.0);
 
-  //scale quantization matrix
-  for (auto& row : quantizationMatrix) 
-  {
-    for (auto& val : row) 
-    {
-      val *= scaleFactor;
-    }
-  }
-
-  int height = quantizedDCT.size(); // Get the height of the quantized DCT coefficient matrix
-  int width = quantizedDCT[0].size(); // Get the width of the quantized DCT coefficient matrix
-  vector<vector<double>> dct(height, vector<double>(width, 0.0)); // Create a 2D vector to store the dequantized DCT coefficients
+  int height = quantizedDCT.size();
+  int width = quantizedDCT[0].size();
+  vector<vector<double>> dct(height, vector<double>(width, 0.0));
 
   for (int u = 0; u < height; ++u) 
   {
     for (int v = 0; v < width; ++v) 
     {
-      // Dequantize the DCT coefficient by multiplying it by the corresponding value in the quantization matrix
-      dct[u][v] = quantizedDCT[u][v] * quantizationMatrix[u][v]; 
+      // Scale the quantization matrix
+      double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
+      
+      // Dequantize
+      dct[u][v] = quantizedDCT[u][v] * scaledQuantization;
     }
   }
 
