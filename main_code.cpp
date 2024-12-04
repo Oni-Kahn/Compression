@@ -204,6 +204,16 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 {
   int height = matrix.size();
   int width = matrix[0].size();
+
+  // Find min and max values for proper normalization
+  double minVal = matrix[0][0];
+  double maxVal = matrix[0][0];
+  for (const auto& row : matrix) {
+    for (double val : row) {
+      minVal = std::min(minVal, val);
+      maxVal = std::max(maxVal, val);
+    }
+  }
   
   // Convert to a 1D vector of unsigned char
   vector<unsigned char> imageData(height * width); 
@@ -211,7 +221,8 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
   {
     for (int j = 0; j < width; ++j) 
     {
-      imageData[i * width + j] = static_cast<unsigned char>(std::max(0.0, std::min(255.0, matrix[i][j] * 255.0))); 
+      double normalizedVal = (matrix[i][j] - minVal) / (maxVal - minVal);
+      imageData[i * width + j] = static_cast<unsigned char>(std::max(0.0, std::min(255.0, normalizedVal * 255.0))); 
     }
   }
 
@@ -243,7 +254,7 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
   // 4. IDCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
 
-  return reconstructedBlock;
+  return {dctCoefficients, quantizedDCT, dequantizedDCT, reconstructedBlock};
 }
 
 int main() 
@@ -365,7 +376,7 @@ int main()
         }
 
         // Process the block for this channel
-        vector<vector<double>> processedBlock = processBlock(block, quality);
+        auto [dctCoefficients, quantizedDCT, dequantizedDCT, reconstructedBlock] = processBlock(block, quality);
         // Copy the processed block back into reconstructed channel
         for (int u = 0; u < 8; ++u) 
         {
@@ -380,10 +391,10 @@ int main()
         if (c == channels - 1 && i == height - 8 && j == width - 8)
         {
           // Plot the matrices once per channel
-          plotMatrix(dctCoefficients, "DCT Coefficients_" + to_string(i) + "_" + to_string(j) + ".png");
-          plotMatrix(quantizedDCT, "Quantized DCT_" + to_string(i) + "_" + to_string(j) + ".png");
-          plotMatrix(dequantizedDCT, "De-Quantized DCT_" + to_string(i) + "_" + to_string(j) + ".png");
-          plotMatrix(reconstructedBlock, "Reconstructed Block_" + to_string(i) + "_" + to_string(j) + ".png");
+        plotMatrix(dctCoefficients, "DCT Coefficients");
+        plotMatrix(quantizedDCT, "Quantized DCT");
+        plotMatrix(dequantizedDCT, "De-Quantized DCT");
+        plotMatrix(reconstructedBlock, "Reconstructed Block");
         }
       }
     }
