@@ -90,7 +90,7 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
   };
 
   // Adjust quantization matrix based on quality (lower quality = more compression)
-  double scalingFactor = 1.0;
+  double scaleFactor = 1.0;
   if (quality < 50) 
   {
     scaleFactor = 50.0 / quality;
