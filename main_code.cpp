@@ -73,49 +73,59 @@ vector<vector<double>> idctTransform(const vector<vector<double>>& dct)
   return matrix; // Return the 2D vector of reconstructed image data
 }
  
-// Function to quantize the DCT coefficients
 vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int quality) 
 {
-  // Define a quantization matrix (you can adjust these values)
-  vector<vector<int>> quantizationMatrix = 
-  {
-    {16, 11, 10, 16, 24, 40, 51, 61},
-    {12, 12, 14, 19, 26, 58, 60, 55},
-    {14, 13, 16, 24, 40, 57, 69, 56},
-    {14, 17, 22, 29, 51, 87, 80, 62},
-    {18, 22, 37, 56, 68, 109, 103, 77},
-    {24, 35, 55, 64, 81, 104, 113, 92},
-    {49, 64, 78, 87, 103, 121, 120, 101},
-    {72, 92, 95, 98, 112, 100, 103, 99}
-  };
+    vector<vector<int>> quantizationMatrix = 
+    {
+        {16, 11, 10, 16, 24, 40, 51, 61},
+        {12, 12, 14, 19, 26, 58, 60, 55},
+        {14, 13, 16, 24, 40, 57, 69, 56},
+        {14, 17, 22, 29, 51, 87, 80, 62},
+        {18, 22, 37, 56, 68, 109, 103, 77},
+        {24, 35, 55, 64, 81, 104, 113, 92},
+        {49, 64, 78, 87, 103, 121, 120, 101},
+        {72, 92, 95, 98, 112, 100, 103, 99}
+    };
 
-  // More dynamic quality scaling
-    double qualityFactor = (1.0 - quality / 100.0) * 10.0 + 0.1;
+    // Very fine-grained quality scaling
+    double qualityFactor = std::max(0.01, (100.0 - quality) / 50.0);
 
     int height = dct.size();
     int width = dct[0].size();
     vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
 
+    // Find the maximum absolute coefficient for normalization
+    double maxCoeff = 0.0;
+    for (const auto& row : dct) {
+        for (double val : row) {
+            maxCoeff = std::max(maxCoeff, std::abs(val));
+        }
+    }
+
+    // Prevent division by zero
+    maxCoeff = std::max(maxCoeff, 1e-10);
+
     for (int u = 0; u < height; ++u) 
     {
         for (int v = 0; v < width; ++v) 
         {
-            // Dynamic scaling based on coefficient magnitude
+            // Adaptive scaling considering coefficient magnitude
             double scaledQuantization = quantizationMatrix[u][v] * qualityFactor;
             
-            // Adaptive preservation with coefficient-aware threshold
-            double absCoeff = std::abs(dct[u][v]);
-            double threshold = scaledQuantization * (1.0 + std::tanh(absCoeff / 1000.0));
-            // Preserve coefficients more intelligently
-            if (absCoeff > threshold) {
-                // Round to nearest multiple of scaled quantization
+            // Normalize coefficient relative to max coefficient
+            double normalizedCoeff = std::abs(dct[u][v]) / maxCoeff;
+            
+            // More nuanced preservation threshold
+            double threshold = scaledQuantization * (1.0 + std::log1p(normalizedCoeff));
+            
+            // Preserve coefficients
+            if (std::abs(dct[u][v]) > threshold) {
+                // Quantize with preservation of sign
                 quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
             }
-            else {
-                // For very small coefficients, use a small non-zero preservation
-                quantizedDCT[u][v] = (absCoeff > scaledQuantization * 0.1) 
-                    ? std::copysign(scaledQuantization * 0.1, dct[u][v]) 
-                    : 0.0;
+            else if (std::abs(dct[u][v]) > scaledQuantization * 0.01) {
+                // Preserve very small but non-negligible coefficients
+                quantizedDCT[u][v] = std::copysign(scaledQuantization * 0.01, dct[u][v]);
             }
         }
     }
