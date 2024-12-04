@@ -243,37 +243,28 @@ int main()
   }
   
   //step 3: convert the image data to a 2D vector of doubles (grayscale)
-  vector<vector<double>> imageMatrix(height, vector<double>(width));
-  for (int i = 0; i < height; ++i) 
+  vector<vector<vector<double>>> imageMatrices(channels);
+  for (int c = 0; c < channels; ++c) 
   {
-    for (int j = 0; j < width; ++j) 
+    imageMatrices[c] = vector<vector<double>>(height, vector<double>(width));
+    for (int i = 0; i < height; ++i)
     {
-      // Calculate the index into the imageData array
-        int index = i * width * channels + j * channels; 
-
-        // Check if the index is within the bounds of the array
-        if (index >= 0 && index < imageDataSize) 
-        {
-            imageMatrix[i][j] = static_cast<double>(imageData[index]) / 255.0;
-        } 
-        else 
-        {
-            // Handle the error (e.g., print an error message, set a default value)
-            cerr << "Error: Index out of bounds." << endl;
-            imageMatrix[i][j] = 0.0; // Or another default value
-        }
-      // Assuming grayscale, take the average of R, G, B values if the image is not grayscale
-      imageMatrix[i][j] = static_cast<double>(imageData[i * width * channels + j * channels]) / 255.0; 
+      for (int j = 0; j < width; ++j) 
+      {
+        // Calculate the index into the imageData array
+        int index = i * width * channels + j * channels + c; 
+        imageMatrices[c][i][j] = static_cast<double>(imageData[index]) / 255.0; 
+      }
     }
   }
   
-  // After converting imageData to imageMatrix
+  // After converting imageData to imageMatrices
   cout << "Original image pixel values:" << endl;
   for (int i = 0; i < 10; ++i) 
   {
     for (int j = 0; j < 10; ++j) 
     {
-      cout << imageMatrix[i][j] << " "; 
+      cout << imageMatrices[c][i][j] << " "; 
     }
     cout << endl;
   }
@@ -284,56 +275,60 @@ int main()
   //cout << "Enter desired quality (0-100): ";
   //cin >> quality;
 
-  //initialize reconstructedImage 
-  vector<vector<double>> reconstructedImage(height, vector<double>(width, 0.0));
-  
-  // Process the image in 8x8 blocks
-  for (int i = 0; i < height; i += 8) 
+  //initialize reconstructedChannels 
+  vector<vector<vector<double>>> reconstructedChannels(channels);
+  for (int c = 0; c < channels; ++c)
   {
-    for (int j = 0; j < width; j += 8) 
+    reconstructedChannels[c] = vector<vector<double>>(height, vector<double>(width,0.0));
+    // Process blocks per channel
+    for (int i = 0; i < height; i += 8) 
     {
-      // Extract an 8x8 block from the image
-      vector<vector<double>> block(8, vector<double>(8));
-      for (int u = 0; u < 8; ++u) 
+      for (int j = 0; j < width; j += 8) 
       {
-        for (int v = 0; v < 8; ++v) 
+        // Extract an 8x8 block from the image
+        vector<vector<double>> block(8, vector<double>(8));
+        for (int u = 0; u < 8; ++u) 
         {
-          // Handle boundary conditions: If the block goes outside the image,
-          // use the edge pixel value.
-          int imgU = std::min(i + u, height - 1);
-          int imgV = std::min(j + v, width - 1);
-          block[u][v] = imageMatrix[imgU][imgV]; 
+          for (int v = 0; v < 8; ++v) 
+          {
+            // Handle boundary conditions: If the block goes outside the image,
+            // use the edge pixel value.
+            int imgU = std::min(i + u, height - 1);
+            int imgV = std::min(j + v, width - 1);
+            block[u][v] = imageMatrices[c][imgU][imgV]; 
+          }
         }
-      }
 
-      // Process the block
-      vector<vector<double>> processedBlock = processBlock(block, quality);
-      // Copy the processed block back into the image
-      for (int u = 0; u < 8; ++u) 
-      {
-        for (int v = 0; v < 8; ++v) 
+        // Process the block for this channel
+        vector<vector<double>> processedBlock = processBlock(block, quality);
+        // Copy the processed block back into reconstructed channel
+        for (int u = 0; u < 8; ++u) 
         {
-          int imgU = std::min(i + u, height - 1);
-          int imgV = std::min(j + v, width - 1);
-          reconstructedImage[imgU][imgV] = processedBlock[u][v];          
+          for (int v = 0; v < 8; ++v) 
+          {
+            int imgU = std::min(i + u, height - 1);
+            int imgV = std::min(j + v, width - 1);
+            reconstructedChannels[c][imgU][imgV] = processedBlock[u][v];          
+          }
         }
       }
     }
   }
-  
   //step 8: convert back to an unsigned char format for saving
-  vector<unsigned char> outputData(height * width);
-  for (int i = 0; i < height; ++i) 
+  vector<unsigned char> outputData(height * width * channels);
+  for (int c = 0; c < channels; ++c)
   {
-    for (int j = 0; j < width; ++j) 
+    for (int i = 0; i < height; ++i) 
     {
-      outputData[i * width + j] = static_cast<unsigned char>(reconstructedImage[i][j] * 255.0);
+      for (int j = 0; j < width; ++j) 
+      {
+        outputData[i * width * channels + j * channels + c] = static_cast<unsigned char>(reconstructedChannels[c][i][j] * 255.0);
+      }
     }
   }
-  
   //step 9: save the reconstructed image
   string outputFilename = "reconstructed_" + filename;
-  if (stbi_write_png(outputFilename.c_str(), width, height, 1, outputData.data(), width) == 0) 
+  if (stbi_write_png(outputFilename.c_str(), width, height, channels, outputData.data(), width * channels) == 0) 
   {
     cerr << "Error saving image." << endl;
     return 1;
