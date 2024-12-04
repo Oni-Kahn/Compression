@@ -14,7 +14,7 @@
 #include "stb_image_write.h"
 
 // Include headers for plotting
-#include "matplotlibcpp.h"
+#include <matplotlibcpp>
 
 using namespace std;
 namespace plt = matplotlibcpp;
