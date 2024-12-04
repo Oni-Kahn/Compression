@@ -389,7 +389,7 @@ int main()
           {
             int imgU = std::min(i + u, height - 1);
             int imgV = std::min(j + v, width - 1);
-            reconstructedChannels[c][imgU][imgV] = processedBlock[u][v];          
+            reconstructedChannels[c][imgU][imgV] = processBlock[u][v];          
           }
         }
         //if this is the last block, plot
