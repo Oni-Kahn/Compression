@@ -187,7 +187,7 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 
   //Find min and max val
   double minVal = 1e10;
-  double maxVal - -1e10;
+  double maxVal = -1e10;
   for (const auto& row : matrix)
   {
     for (double val : row)
