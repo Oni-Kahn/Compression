@@ -260,11 +260,16 @@ int main()
   
   // After converting imageData to imageMatrices
   cout << "Original image pixel values:" << endl;
-  for (int i = 0; i < 10; ++i) 
+  for (int c = 0; c < channels; ++c)
   {
-    for (int j = 0; j < 10; ++j) 
+    cout << "Channel " << c << ":" << endl;
+    for (int i = 0; i < 10; ++i) 
     {
-      cout << imageMatrices[c][i][j] << " "; 
+      for (int j = 0; j < 10; ++j) 
+      {
+        cout << imageMatrices[c][i][j] << " "; 
+      }
+      cout << endl;
     }
     cout << endl;
   }
