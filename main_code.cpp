@@ -214,7 +214,14 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
     }
     cout << endl;
   }
-  
+  // Print Reconstructed Block
+  cout << "Reconstructed Block Values:" << endl;
+  for (const auto& row : reconstructedBlock) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
   return reconstructedBlock;
 }
 
