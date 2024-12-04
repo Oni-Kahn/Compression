@@ -203,7 +203,7 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
   {
     for (int j = 0; j < width; ++j) 
     {
-      double normalizedVal = (matrix[i][j] - minVal) / maxVal - minVal;);
+      double normalizedVal = ((matrix[i][j] - minVal) / maxVal - minVal);
       imageData[i * width + j] = static_cast<unsigned char>(normalizedVal * 255.0); 
     }
   }
