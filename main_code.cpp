@@ -162,18 +162,59 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
 // Function to process an 8x8 block of the image
 vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality) 
 {
+  // Print input block
+  cout << "Input Block Values:" << endl;
+  for (const auto& row : block) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
+  
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
-
+  // Print DCT coefficients
+  cout << "DCT Coefficients:" << endl;
+  for (const auto& row : dctCoefficients) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
+  
   // 2. Quantization
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-
+  // Print Quantized DCT
+  cout << "Quantized DCT:" << endl;
+  for (const auto& row : quantizedDCT) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
+  
   // 3. Dequantization
   vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-
+  // Print Dequantized DCT
+  cout << "De-Quantized DCT:" << endl;
+  for (const auto& row : dequantizedDCT) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
+  
   // 4. Inverse DCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
-
+  // Print IDCT
+  cout << "IDCT:" << endl;
+  for (const auto& row : idctTransform) {
+    for (double val : row) {
+      cout << val << " ";
+    }
+    cout << endl;
+  }
+  
   return reconstructedBlock;
 }
 
