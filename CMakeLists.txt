@@ -7,5 +7,9 @@ set(matplotlib-cpp_CONFIG ${matplotlib-cpp_DIR}/matplotlib_cppConfig.cmake)
 find_package(matplotlib_cpp REQUIRED CONFIG)
 include_directories(matplotlib_cpp)
 
+# find python files
+find_package(Python3 COMPONENTS Development REQUIRED)
+include_directories(${Python3_INCLUDE_DIRS})
+
 # Add your executable
 add_executable(Compression main_code.cpp)  # Replace 'compression' with your desired executable name
