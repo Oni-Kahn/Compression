@@ -311,6 +311,12 @@ int main()
 
   //initialize reconstructedChannels 
   vector<vector<vector<double>>> reconstructedChannels(channels);
+  // Store matrices to plot once per channel
+  vector<vector<double>> dctCoefficients(8, vector<double>(8));
+  vector<vector<double>> quantizedDCT(8, vector<double>(8));
+  vector<vector<double>> dequantizedDCT(8, vector<double>(8));
+  vector<vector<double>> reconstructedBlock(8, vector<double>(8));
+  
   for (int c = 0; c < channels; ++c)
   {
     reconstructedChannels[c] = vector<vector<double>>(height, vector<double>(width,0.0));
@@ -347,6 +353,11 @@ int main()
         }
       }
     }
+    // Plot the matrices once per channel
+    plotMatrix(dctCoefficients, "DCT Coefficients (Channel " + to_string(c) + ")");
+    plotMatrix(quantizedDCT, "Quantized DCT (Channel " + to_string(c) + ")");
+    plotMatrix(dequantizedDCT, "De-Quantized DCT (Channel " + to_string(c) + ")");
+    plotMatrix(reconstructedBlock, "Reconstructed Block (Channel " + to_string(c) + ")");
   }
   //step 8: convert back to an unsigned char format for saving
   vector<unsigned char> outputData(height * width * channels);
@@ -370,11 +381,6 @@ int main()
   cout << "Reconstructed image saved as " << outputFilename << endl;
   cout << "Image dimensions: " << width << " x " << height << endl;
   cout << "Number of channels: " << channels << endl;
-  
-  plotMatrix(dctCoefficients, "DCT Coefficients");
-  plotMatrix(quantizedDCT, "Quantized DCT");
-  plotMatrix(dequantizedDCT, "De-Quantized DCT");
-  plotMatrix(reconstructedBlock, "Reconstructed Block");
   
   return 0;
 }
