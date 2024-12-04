@@ -13,8 +13,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-using namespace std;
+// Include headers for plotting
+#include "matplotlibcpp.h"
 
+using namespace std;
+namespace plt = matplotlibcpp;
 
 //function to preform 2D DCT
 vector<vector<double>> dctTransform(const vector<vector<double>>& matrix)
@@ -176,61 +179,35 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     return dct;
 }
 
+// Function to plot a 2D matrix
+void plotMatrix(const vector<vector<double>>& matrix, const string& title) {
+    plt::figure();
+    plt::title(title);
+    plt::imshow(matrix, {{"cmap", "gray"}}); 
+    // Save the plot to a file
+    string filename = title + ".png";
+    plt::save(filename);
+    cout << "Plot saved as " << filename << endl;
+}
 
 // Function to process an 8x8 block of the image
 vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality) 
 {
-  // Print input block
-  cout << "Input Block Values:" << endl;
-  for (const auto& row : block) {
-    for (double val : row) {
-      cout << val << " ";
-    }
-    cout << endl;
-  }
-  
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
-  // Print DCT coefficients
-  cout << "DCT Coefficients:" << endl;
-  for (const auto& row : dctCoefficients) {
-    for (double val : row) {
-      cout << val << " ";
-    }
-    cout << endl;
-  }
-  
+  plotMatrix(dctCoefficients, "DCT Coefficients");
+
   // 2. Quantization
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  // Print Quantized DCT
-  cout << "Quantized DCT:" << endl;
-  for (const auto& row : quantizedDCT) {
-    for (double val : row) {
-      cout << val << " ";
-    }
-    cout << endl;
-  }
-  
+  plotMatrix(quantizedDCT, "Quantized DCT");
+
   // 3. Dequantization
   vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  // Print Dequantized DCT
-  cout << "De-Quantized DCT:" << endl;
-  for (const auto& row : dequantizedDCT) {
-    for (double val : row) {
-      cout << val << " ";
-    }
-    cout << endl;
-  }
+  plotMatrix(dequantizedDCT, "De-Quantized DCT");
 
+  // 4. IDCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
-  // Print Reconstructed Block
-  cout << "Reconstructed Block Values:" << endl;
-  for (const auto& row : reconstructedBlock) {
-    for (double val : row) {
-      cout << val << " ";
-    }
-    cout << endl;
-  }
+  plotMatrix(reconstructedBlock, "Reconstructed Block");
   return reconstructedBlock;
 }
 
@@ -315,21 +292,6 @@ int main()
     }
   }
   
-  // After converting imageData to imageMatrices
-  cout << "Original image pixel values:" << endl;
-  for (int c = 0; c < channels; ++c)
-  {
-    cout << "Channel " << c << ":" << endl;
-    for (int i = 0; i < 10; ++i) 
-    {
-      for (int j = 0; j < 10; ++j) 
-      {
-        cout << imageMatrices[c][i][j] << " "; 
-      }
-      cout << endl;
-    }
-    cout << endl;
-  }
   stbi_image_free(imageData); //free the original image data
   
   //step 5: quantize DCT coefficients and adjust quality as needed
