@@ -90,7 +90,7 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
   };
 
   // Adjust quantization for very small values
-  double qualityScale = (quality < 50) ? (50.0 / quality) : (2.0 - quality / 50.0);
+  double qualityScale = (quality < 50) ? (5000.0 / quality)/100.0 : (200.0 - quality*2.0 / 100.0);
 
   int height = dct.size();
   int width = dct[0].size();
@@ -102,11 +102,14 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
     {
       // Scale the quantization matrix
       double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
+
+      // More nuanced preservation threshold
+      double threshold = scaledQuantization * (1.0 + log(std::abs(dct[u][v]) + 1.0));
       
       // Use a lower threshold for preservation
-      if (std::abs(dct[u][v]) > scaledQuantization * 0.001) {
+      if (std::abs(dct[u][v]) > threshold) {
         // Quantize with more precision
-        quantizedDCT[u][v] = dct[u][v] / scaledQuantization;
+        quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
       }
     }
   }
@@ -130,7 +133,8 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     {72, 92, 95, 98, 112, 100, 103, 99}
   };
 
-  double qualityScale = (quality < 50) ? (50.0 / quality) : (2.0 - quality / 50.0);
+  // Adjust quantization for very small values
+  double qualityScale = (quality < 50) ? (5000.0 / quality)/100.0 : (200.0 - quality*2.0 / 100.0);
 
   int height = quantizedDCT.size();
   int width = quantizedDCT[0].size();
@@ -142,13 +146,20 @@ vector<vector<double>> dequantizeDCT(const vector<vector<double>>& quantizedDCT,
     {
       // Scale the quantization matrix
       double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
-      
-      // Dequantize
-      dct[u][v] = quantizedDCT[u][v] * scaledQuantization;
-    }
-  }
 
-  return dct; // Return the 2D vector of dequantized DCT coefficients
+      // More nuanced preservation threshold
+      double threshold = scaledQuantization * (1.0 + log(std::abs(dct[u][v]) + 1.0));
+      
+      // Use a lower threshold for preservation
+      if (std::abs(dct[u][v]) > threshold) 
+      {
+        // Quantize with more precision
+        dct[u][v] = std::round(quantizedDCT[u][v] / scaledQuantization) * scaledQuantization;
+      }
+    }
+
+    return dct; // Return the 2D vector of quantized DCT coefficients
+  }
 }
 
 // Function to process an 8x8 block of the image
