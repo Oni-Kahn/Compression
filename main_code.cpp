@@ -237,7 +237,7 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 }
 
 // Function to process an 8x8 block of the image
-vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality) 
+vector<vector<double>> processBlock(const vector<vector<double>>& block, int quality, vector<vector<double>>& dctCoefficients, vector<vector<double>>& quantizedDCT, vector<vector<double>>& dequantizedDCT) 
 {
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
@@ -254,7 +254,7 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
   // 4. IDCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
 
-  return {dctCoefficients, quantizedDCT, dequantizedDCT, reconstructedBlock};
+  return reconstructedBlock;
 }
 
 int main() 
@@ -356,6 +356,11 @@ int main()
   for (int c = 0; c < channels; ++c)
   {
     reconstructedChannels[c] = vector<vector<double>>(height, vector<double>(width,0.0));
+    vector<vector<double>> dctCoefficients(8, vector<double>(8));
+    vector<vector<double>> quantizedDCT(8, vector<double>(8));
+    vector<vector<double>> dequantizedDCT(8, vector<double>(8));
+    vector<vector<double>> reconstructedBlock(8, vector<double>(8));
+    
     // Process blocks per channel
     for (int i = 0; i < height; i += 8) 
     {
@@ -376,7 +381,7 @@ int main()
         }
 
         // Process the block for this channel
-        auto [dctCoefficients, quantizedDCT, dequantizedDCT, reconstructedBlock] = processBlock(block, quality);
+        vector<vector<double>> reconstructedBlock = processBlock(block, quality, dctCoefficients, quantizedDCT, dequantizedDCT);
         // Copy the processed block back into reconstructed channel
         for (int u = 0; u < 8; ++u) 
         {
