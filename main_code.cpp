@@ -203,14 +203,14 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
   {
     for (int j = 0; j < width; ++j) 
     {
-      double normalizedVal = ((matrix[i][j] - minVal) / maxVal - minVal);
+      double normalizedVal = ((matrix[i][j] - minVal) / (maxVal - minVal));
       imageData[i * width + j] = static_cast<unsigned char>(normalizedVal * 255.0); 
     }
   }
 
   plt::figure();
   plt::title(title);
-  plt::imshow(imageData.data(), height, width, 1, {{"cmap", "gray"}}); // 1 color channel for grayscale
+  plt::imshow(imageData.data(), height, width, 1, {{"cmap", "magma"}}); // 1 color channel for grayscale
   string filename = title + ".png";
   plt::save(filename);
   cout << "Plot saved as " << filename << endl;
