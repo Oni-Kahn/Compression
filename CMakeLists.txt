@@ -5,7 +5,7 @@ project(Compression)  # Set the project name
 set(matplotlib-cpp_DIR /home/runner/work/Compression/Compression/matplotlib-cpp/build)
 set(matplotlib-cpp_CONFIG ${matplotlib-cpp_DIR}/matplotlib_cppConfig.cmake)
 find_package(matplotlib_cpp REQUIRED CONFIG)
-include_directories(matplotlib_cpp)
+include_directories(${matplotlib-cpp_INCLUDE_DIRS})
 
 # find python files
 find_package(Python3 COMPONENTS Development REQUIRED)
