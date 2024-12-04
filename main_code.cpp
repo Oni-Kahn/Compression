@@ -89,32 +89,37 @@ vector<vector<double>> quantizeDCT(const vector<vector<double>>& dct, int qualit
     {72, 92, 95, 98, 112, 100, 103, 99}
   };
 
-  // Adjust quantization for very small values
-  double qualityScale = (quality < 50) ? (5000.0 / quality)/100.0 : (200.0 - quality*2.0 / 100.0);
+  // More dynamic quality scaling
+    double qualityFactor = (1.0 - quality / 100.0) * 10.0 + 0.1;
 
-  int height = dct.size();
-  int width = dct[0].size();
-  vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
+    int height = dct.size();
+    int width = dct[0].size();
+    vector<vector<double>> quantizedDCT(height, vector<double>(width, 0.0));
 
-  for (int u = 0; u < height; ++u) 
-  {
-    for (int v = 0; v < width; ++v) 
+    for (int u = 0; u < height; ++u) 
     {
-      // Scale the quantization matrix
-      double scaledQuantization = quantizationMatrix[u][v] * qualityScale;
-
-      // More nuanced preservation threshold
-      double threshold = scaledQuantization * (1.0 + log(std::abs(dct[u][v]) + 1.0));
-      
-      // Use a lower threshold for preservation
-      if (std::abs(dct[u][v]) > threshold) {
-        // Quantize with more precision
-        quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
-      }
+        for (int v = 0; v < width; ++v) 
+        {
+            // Dynamic scaling based on coefficient magnitude
+            double scaledQuantization = quantizationMatrix[u][v] * qualityFactor;
+            
+            // Adaptive preservation with coefficient-aware threshold
+            double absCoeff = std::abs(dct[u][v]);
+            double threshold = scaledQuantization * (1.0 + std::tanh(absCoeff / 1000.0));
+            // Preserve coefficients more intelligently
+            if (absCoeff > threshold) {
+                // Round to nearest multiple of scaled quantization
+                quantizedDCT[u][v] = std::round(dct[u][v] / scaledQuantization) * scaledQuantization;
+            }
+            else {
+                // For very small coefficients, use a small non-zero preservation
+                quantizedDCT[u][v] = (absCoeff > scaledQuantization * 0.1) 
+                    ? std::copysign(scaledQuantization * 0.1, dct[u][v]) 
+                    : 0.0;
+            }
+        }
     }
-  }
-
-  return quantizedDCT; // Return the 2D vector of quantized DCT coefficients
+    return quantizedDCT;
 }
 
 // Function to dequantize the DCT coefficients
