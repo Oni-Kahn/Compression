@@ -205,19 +205,19 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
 {
   // 1. DCT Transform
   vector<vector<double>> dctCoefficients = dctTransform(block);
-  plotMatrix(dctCoefficients, "DCT Coefficients");
+  
 
   // 2. Quantization
   vector<vector<double>> quantizedDCT = quantizeDCT(dctCoefficients, quality);
-  plotMatrix(quantizedDCT, "Quantized DCT");
+  
 
   // 3. Dequantization
   vector<vector<double>> dequantizedDCT = dequantizeDCT(quantizedDCT, quality);
-  plotMatrix(dequantizedDCT, "De-Quantized DCT");
+
 
   // 4. IDCT Transform
   vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
-  plotMatrix(reconstructedBlock, "Reconstructed Block");
+
   return reconstructedBlock;
 }
 
