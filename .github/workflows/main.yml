@@ -24,14 +24,8 @@ jobs:
         sudo make install
         cd ../../
 
-    - name: Check Python version
-      run: python --version
-
-    - name: Check pip version
-      run: pip --version
-
     - name: Check matplotlib
-      run: ls -lR matplotlib-cpp/build
+      run: echo "/usr/local/lib/python3.10/dist-packages/matplotlibcpp" >> $GITHUB_PATH
 
     - name: Configure CMake (matplotlib-cpp)
       working-directory: ./matplotlib-cpp/build
@@ -40,9 +34,6 @@ jobs:
     - name: Build (matplotlib-cpp)
       working-directory: ./matplotlib-cpp/build
       run: cmake --build .
-
-    - name: Check for matplotlib-cppConfig.cmake
-      run: ls -l /home/runner/work/Compression/Compression/matplotlib-cpp/build
 
     - name: Clean build dir
       run: |
