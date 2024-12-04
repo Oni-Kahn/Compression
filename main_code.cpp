@@ -203,6 +203,8 @@ vector<vector<double>> processBlock(const vector<vector<double>>& block, int qua
     }
     cout << endl;
   }
+
+  vector<vector<double>> reconstructedBlock = idctTransform(dequantizedDCT);
   // Print Reconstructed Block
   cout << "Reconstructed Block Values:" << endl;
   for (const auto& row : reconstructedBlock) {
