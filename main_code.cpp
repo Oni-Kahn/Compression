@@ -217,11 +217,12 @@ void plotMatrix(const vector<vector<double>>& matrix, const string& title)
 
   plt::figure();
   plt::title(title);
-  plt::show(block=True);
   plt::imshow(imageData.data(), height, width, 1, {{"cmap", "magma"}}); // 1 color channel for grayscale
   string filename = title + ".png";
   plt::save(filename);
   cout << "Plot saved as " << filename << endl;
+
+  plt::show(block=true);
 }
 
 // Function to process an 8x8 block of the image
